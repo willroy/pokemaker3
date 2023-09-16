@@ -49,7 +49,7 @@ function Game:new(o)
 end
 
 function Game:init(project, new)
-   self.project = project or ""
+   self.project = project or "project1"
 
    if new then
       if self.project == "" then self.project = "New-Project" end
@@ -84,6 +84,9 @@ function Game:mousereleased(x, y, button, istouch)
 end
 
 function Game:keypressed(key, code)
+   if key == "s" then self:save() end
+   if key == "l" then self:load() end
+
    tilePalette:keypressed(key, code)
    workspaceTileGrid:keypressed(key, code)
 end
@@ -94,5 +97,9 @@ function Game:wheelmoved(x, y)
 end
 
 function Game:save()
+   workspaceTileGrid:save(self.project)
+end
 
+function Game:load()
+   workspaceTileGrid:load(self.project)
 end
