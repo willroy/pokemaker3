@@ -1,7 +1,4 @@
 TODO
 
-Void checker
-	select walkable area
-	highlight void tiles in fov
-	keep area highlighted for other tabs (easier tile placement)
-
+maybe add placing tile removes the tile already there later
+add layering
