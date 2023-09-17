@@ -2,6 +2,11 @@ require "lfs"
 
 local grid = love.graphics.newImage("assets/game/grid.png")
 
+local brushes = {
+   ["pencil"]={{0,0}},
+   ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
+}
+
 Map = {}
 
 function Map:new(o)
@@ -24,6 +29,8 @@ function Map:init(id, x, y, width, height)
    self.tileSheets = self:newTileSheet()
 
    self.lastUpdated = {}
+
+   self.brush = brushes["pencil"]
 end
 
 function Map:update(dt)
@@ -47,15 +54,18 @@ function Map:placeTile()
    local tiles = self.tileSheets[selectedTile[1]]["tiles"]
    local tileQuad = love.graphics.newQuad(selectedTile[2]["x"], selectedTile[2]["y"], selectedTile[2]["w"], selectedTile[2]["h"], self.tileSheets[selectedTile[1]]["image"])
 
-   tiles[#tiles+1] = {
-      ["quad"]=tileQuad, 
-      ["quadX"]=selectedTile[2]["x"], 
-      ["quadY"]=selectedTile[2]["y"],
-      ["quadW"]=selectedTile[2]["w"], 
-      ["quadH"]=selectedTile[2]["h"], 
-      ["x"]=relativeX, 
-      ["y"]=relativeY
-   }
+   for i = 1, #self.brush do
+      tiles[#tiles+1] = {
+         ["id"]=#tiles+1,
+         ["quad"]=tileQuad, 
+         ["quadX"]=selectedTile[2]["x"], 
+         ["quadY"]=selectedTile[2]["y"],
+         ["quadW"]=selectedTile[2]["w"], 
+         ["quadH"]=selectedTile[2]["h"], 
+         ["x"]=relativeX+(self.brush[i][1]*32), 
+         ["y"]=relativeY+(self.brush[i][2]*32)
+      }
+   end
 
    self.lastUpdated = {relativeX, relativeY}
    self.tileSheets[selectedTile[1]]["tiles"] = tiles
@@ -97,13 +107,14 @@ function Map:save(project)
    for sheet, tiles in pairs(self.tileSheets) do
       file:write("= "..sheet.."\n")
       for i = 1, #tiles["tiles"] do
+         local id = tiles["tiles"][i]["id"]
          local quadX = tiles["tiles"][i]["quadX"]
          local quadY = tiles["tiles"][i]["quadY"]
          local quadW = tiles["tiles"][i]["quadW"]
          local quadH = tiles["tiles"][i]["quadH"]
          local x = tiles["tiles"][i]["x"]
          local y = tiles["tiles"][i]["y"]
-         file:write(quadX..","..quadY..","..quadW..","..quadH..","..x..","..y.."\n")
+         file:write(id..","..quadX..","..quadY..","..quadW..","..quadH..","..x..","..y.."\n")
       end 
    end
 
@@ -128,21 +139,15 @@ function Map:load(project)
             table.insert(lineSplit, str)
          end
 
-         local quadX = lineSplit[1]
-         local quadY = lineSplit[2]
-         local quadW = lineSplit[3]
-         local quadH = lineSplit[4]
-         local x = lineSplit[5]
-         local y = lineSplit[6]
-
          newTileSheets[currentSheet]["tiles"][#newTileSheets[currentSheet]["tiles"]+1] = {
-            ["quad"]=love.graphics.newQuad(lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4], newTileSheets[currentSheet]["image"]),
-            ["quadX"]=lineSplit[1], 
-            ["quadY"]=lineSplit[2],
-            ["quadW"]=lineSplit[3], 
-            ["quadH"]=lineSplit[4], 
-            ["x"]=lineSplit[5], 
-            ["y"]=lineSplit[6]
+            ["id"]=lineSplit[1],
+            ["quad"]=love.graphics.newQuad(lineSplit[2], lineSplit[3], lineSplit[4], lineSplit[5], newTileSheets[currentSheet]["image"]),
+            ["quadX"]=lineSplit[2], 
+            ["quadY"]=lineSplit[3],
+            ["quadW"]=lineSplit[4], 
+            ["quadH"]=lineSplit[5], 
+            ["x"]=lineSplit[6], 
+            ["y"]=lineSplit[7]
          }
       end
    end
@@ -175,4 +180,15 @@ function Map:newTileSheet()
       ["outside_rocks"] = {["image"]=love.graphics.newImage("assets/tilesheets/outside-rocks.png"), ["tiles"]={}},
       ["outside_vegetation"] = {["image"]=love.graphics.newImage("assets/tilesheets/outside-vegetation.png"), ["tiles"]={}}
    }
+end
+
+function Map:getTileToDelete(x, y)
+   for sheet, tiles in pairs(self.tileSheets) do
+      for i = 1, #tiles["tiles"] do
+         local quad = tiles["tiles"][i]["quad"]
+         local x = tiles["tiles"][i]["x"]
+         local y = tiles["tiles"][i]["y"]
+         love.graphics.draw(tiles["image"], quad, x, y)
+      end 
+   end
 end

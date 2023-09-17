@@ -6,7 +6,7 @@ local game = Game:new()
 
 local icon = love.image.newImageData("assets/icon.png");
 
-local current = menu
+local current = game
 
 function love.load()
 	love.window.setTitle("pokemaker3")
@@ -17,6 +17,7 @@ function love.load()
 	io.stdout:setvbuf("no")
  	love.window.setIcon(icon);
 	current:init()
+	openFile("project1")
 end
 
 function love.update(dt)
