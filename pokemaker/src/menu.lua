@@ -20,6 +20,7 @@ function Menu:draw()
 	love.graphics.draw(background, 0, 0)
 	love.graphics.setColor(0,0,0)
 	for i = 1, #self.projects do
+		love.graphics.print(self.projects[i], 70, 270+(i*25))
 		if math.floor((love.mouse.getY()-300)/25)+1 == i then
 			love.graphics.rectangle("line", 60, 270+(i*25), 300, 25)
 		end
