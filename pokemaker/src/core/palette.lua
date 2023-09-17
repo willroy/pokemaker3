@@ -1,15 +1,15 @@
-Tilepalette = {}
-
 local grid = love.graphics.newImage("assets/game/grid.png")
 
-function Tilepalette:new(o)
+Palette = {}
+
+function Palette:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function Tilepalette:init(id, x, y, width, height, tileSheet, tileSheetText)
+function Palette:init(id, x, y, width, height, tileSheet, tileSheetText)
    self.id = id or 0
    self.x = x or 0
    self.y = y or 0
@@ -26,10 +26,10 @@ function Tilepalette:init(id, x, y, width, height, tileSheet, tileSheetText)
    self.selectedTile = {["x"]=0,["y"]=0,["w"]=0,["h"]=0}
 end
 
-function Tilepalette:update(dt)
+function Palette:update(dt)
 end
 
-function Tilepalette:draw()
+function Palette:draw()
    love.graphics.draw(grid, self.gridQuad, self.x, self.y)
    love.graphics.draw(self.tileSheet, self.x, self.y+self.tileSheetOffset)
 	love.graphics.setColor(0.9, 0.2, 0.2,0.9)
@@ -38,7 +38,7 @@ function Tilepalette:draw()
 	love.graphics.setColor(1,1,1)
 end
 
-function Tilepalette:mousepressed(x, y, button, istouch)
+function Palette:mousepressed(x, y, button, istouch)
    if x < self.x or x > (self.x+self.width) then return false end
    if y < self.y or y > (self.y+self.height) then return false end
 
@@ -46,17 +46,17 @@ function Tilepalette:mousepressed(x, y, button, istouch)
    local relativeY = math.floor((y-(self.y+self.tileSheetOffset))/32)*32
    self.selectedTile["x"] = relativeX
    self.selectedTile["y"] = relativeY
-   self.selectedTile["w"] = 32
-   self.selectedTile["h"] = 32
+   self.selectedTile["w"] = 128
+   self.selectedTile["h"] = 128
 end
 
-function Tilepalette:mousereleased(x, y, button, istouch)
+function Palette:mousereleased(x, y, button, istouch)
 end
 
-function Tilepalette:keypressed(key, code)
+function Palette:keypressed(key, code)
 end
 
-function Tilepalette:wheelmoved(x, y)
+function Palette:wheelmoved(x, y)
    local mouseX, mouseY = love.mouse.getPosition()
    local lctrlDown = love.keyboard.isDown("lctrl")
 
@@ -69,6 +69,11 @@ function Tilepalette:wheelmoved(x, y)
    if y > 0 then self.tileSheetOffset = self.tileSheetOffset + (y*offset) end
 end
 
-function Tilepalette:getSelected()
+function Palette:getSelected()
    return {self.tileSheetText, self.selectedTile}
+end
+
+function Palette:setTileSheet(tilesheet, tilesheetText)
+   self.tileSheet = tilesheet
+   self.tileSheetText = tilesheetText
 end

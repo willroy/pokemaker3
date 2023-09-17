@@ -6,12 +6,14 @@ local game = Game:new()
 
 local icon = love.image.newImageData("assets/icon.png");
 
-local current = game
+local current = menu
 
 function love.load()
 	love.window.setTitle("pokemaker3")
 	love.window.setMode(1300, 1000)
 	love.graphics.setBackgroundColor(1,1,1)
+	local font = love.graphics.newFont(16)
+	love.graphics.setFont(font)
 	io.stdout:setvbuf("no")
  	love.window.setIcon(icon);
 	current:init()
@@ -52,4 +54,9 @@ function setCurrent(text)
 	if text == "game" then current = game end
 	if text == "menu" then current = menu end
 	current:init()
+end
+
+function openFile(project)
+	current = game
+	current:init(project)
 end
