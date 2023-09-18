@@ -50,7 +50,7 @@ function Map:draw()
       local quad = tile["quad"]
       local x = tile["x"]
       local y = tile["y"]
-      love.graphics.draw(tileSheets[tilesheet], quad, x, y)
+      love.graphics.draw(tileSheets[tilesheet], quad, x+self.x, y+self.y)
    end
 end
 
@@ -93,4 +93,9 @@ function Map:load(project)
    end
 
    self.tiles = newTiles
+end
+
+function Map:move(dir)
+   self.x = self.x + dir[1]
+   self.y = self.y + dir[2]
 end
