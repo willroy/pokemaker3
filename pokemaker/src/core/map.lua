@@ -70,26 +70,8 @@ function Map:placeTile()
    local selectedTile = palette:getSelected()
    local tileQuad = love.graphics.newQuad(selectedTile[2]["x"], selectedTile[2]["y"], selectedTile[2]["w"], selectedTile[2]["h"], tileSheets[selectedTile[1]])
 
-
-   local replaced = false
    for i = 1, #self.brush do
-      -- if not replaced then 
-      --    for k, tile in pairs(self.tiles) do
-      --       local x = relativeX+(self.brush[i][1]*32)
-      --       local y = relativeY+(self.brush[i][2]*32)
-      --       local w = selectedTile[2]["w"]
-      --       local h = selectedTile[2]["h"]
-      --       local tileX = tonumber(tile["x"])
-      --       local tileY = tonumber(tile["y"])
-      --       if x >= tileX and x < tileX+w then
-      --          if y >= tileY and y < tileY+h then
-      --             self.tiles[k] = nil
-      --             replaced = true
-      --          end
-      --       end
-      --    end
-      -- end
-      self.tiles[#self.tiles+1] = {
+      local newTile = {
          ["id"]=#self.tiles+1,
          ["tilesheet"]=selectedTile[1],
          ["quad"]=tileQuad, 
@@ -100,6 +82,20 @@ function Map:placeTile()
          ["x"]=relativeX+(self.brush[i][1]*32), 
          ["y"]=relativeY+(self.brush[i][2]*32)
       }
+      
+      local replaced = false
+      for k, tile in pairs(self.tiles) do
+         local x = relativeX+(self.brush[i][1]*32)
+         local y = relativeY+(self.brush[i][2]*32)
+         local tileX = tonumber(tile["x"])
+         local tileY = tonumber(tile["y"])
+         if x == tileX and y == tileY then
+            self.tiles[k] = newTile
+            replaced = true
+         end
+      end
+
+      if not replaced then self.tiles[#self.tiles+1] = newTile end
    end
 
    self.lastUpdated = {relativeX, relativeY}
