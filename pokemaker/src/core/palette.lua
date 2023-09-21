@@ -109,10 +109,37 @@ function Palette:wheelmoved(x, y)
 end
 
 function Palette:getSelected()
-   return {self.tileSheetText, self.selectedTile}
+   local selectedTiles = {}
+   if self.selectedTile["w"] > 32 or self.selectedTile["h"] > 32 then
+      local x = self.selectedTile["x"]
+      local y = self.selectedTile["y"]
+      local w = self.selectedTile["w"]
+      local h = self.selectedTile["h"]
+      local quads = self:getCoordsInQuad(x, y, w, h)
+      for i = 1, #quads do
+         selectedTiles[#selectedTiles+1] = {quads[i][1], quads[i][2], quads[i][3], quads[i][4]}
+      end
+   else
+      selectedTiles[1] = {self.selectedTile["x"], self.selectedTile["y"], 0, 0}
+   end
+   return {self.tileSheetText, selectedTiles}
 end
 
 function Palette:setTileSheet(tilesheet, tilesheetText)
    self.tileSheet = tilesheet
    self.tileSheetText = tilesheetText
+end
+
+function Palette:getCoordsInQuad(x, y, w, h)
+   local countW = w/32
+   local countH = h/32
+   local tiles = {}
+
+   for i = 1, countW do
+      for a = 1, countH do
+         tiles[#tiles+1] = {x+(i*32)-32, y+(a*32)-32, i-1, a-1}
+      end 
+   end
+
+   return tiles
 end

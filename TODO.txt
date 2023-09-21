@@ -1,0 +1,27 @@
+TODO
+
+1. Update multi tile select to:
+	Actually add a tile entry per multi tile
+
+2. Collision handling
+	Create collision.lua
+	Same as map.lua but:
+		No tilesheet
+		Only save x y
+
+3. Collision handling game side
+  Use collision data to calculate collision
+
+4. Z-index handling
+	Create z-index.lua
+	Same as collision lua basically
+
+5. Z-index handling game side
+  build list of tiles found with zindex higher
+  loop through and draw after
+
+6. Layering
+	Layer menu top right minimisable
+  Handle game side
+
+7. Start working on game side menuing and playerdata

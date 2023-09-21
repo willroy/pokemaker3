@@ -1,4 +1,0 @@
-TODO
-
-maybe add placing tile removes the tile already there later
-add layering

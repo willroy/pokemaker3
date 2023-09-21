@@ -22,13 +22,20 @@ end
 function Player:init(x, y)
 	self.x = x or 0
 	self.y = y or 0
+	self.dir = "front"
 end
 
 function Player:update(dt)
+	if     love.keyboard.isDown("w") then self.dir = "back"
+	elseif love.keyboard.isDown("a") then self.dir = "left"
+	elseif love.keyboard.isDown("s") then self.dir = "front"
+	elseif love.keyboard.isDown("d") then self.dir = "right" end
 end
 
 function Player:draw()
-	love.graphics.draw(characters, character["back"], self.x, self.y)
+	local rotate = {0,0,1,1}
+	if self.dir == "right" then rotate = {32,0,-1,1} end 
+	love.graphics.draw(characters, character[self.dir], self.x+rotate[1], self.y, rotate[2], rotate[3], rotate[4])
 end
 
 function Player:mousepressed(x, y, button, istouch)

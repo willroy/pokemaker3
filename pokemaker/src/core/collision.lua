@@ -61,50 +61,48 @@ function Map:placeTile()
    if not pressed then return false end
    if x < self.x or x > (self.x+self.width) then return false end
    if y < self.y or y > (self.y+self.height) then return false end
-   
+
    local relativeX = math.floor((x)/32)*32+5
    local relativeY = math.floor((y)/32)*32-14
 
    if self.lastUpdated[1] == relativeX and self.lastUpdated[2] == relativeY then return false end
+   
+   local selectedTile = palette:getSelected()
+   local tileQuad = love.graphics.newQuad(selectedTile[2]["x"], selectedTile[2]["y"], selectedTile[2]["w"], selectedTile[2]["h"], tileSheets[selectedTile[1]])
 
-   local selectedTiles = palette:getSelected()
-   local selectedTileSheet = selectedTiles[1]
-   local selectedTiles = selectedTiles[2]
-
-   for s = 1, #selectedTiles do
-      for i = 1, #self.brush do
-         local x = relativeX+(self.brush[i][1]*32)+(selectedTiles[s][3]*32)
-         local y = relativeY+(self.brush[i][2]*32)+(selectedTiles[s][4]*32)
-         local newTile = {
-            ["tilesheet"]=selectedTileSheet,
-            ["id"] = #self.tiles+1,
-            ["quad"] = love.graphics.newQuad(selectedTiles[s][1], selectedTiles[s][2], 32, 32, tileSheets[selectedTileSheet]),
-            ["quadX"] = selectedTiles[s][1],
-            ["quadY"] = selectedTiles[s][2],
-            ["x"] = x,
-            ["y"] = y
-         }
-
-         local replaced = false
-         for k, tile in pairs(self.tiles) do
-            local tileX = tonumber(tile["x"])
-            local tileY = tonumber(tile["y"])
-            if x == tileX and y == tileY then
-               newTile["id"] = self.tiles[k]["id"]
-               self.tiles[k] = newTile
-               replaced = true
-            end
+   for i = 1, #self.brush do
+      local newTile = {
+         ["id"]=#self.tiles+1,
+         ["tilesheet"]=selectedTile[1],
+         ["quad"]=tileQuad, 
+         ["quadX"]=selectedTile[2]["x"], 
+         ["quadY"]=selectedTile[2]["y"],
+         ["quadW"]=selectedTile[2]["w"], 
+         ["quadH"]=selectedTile[2]["h"], 
+         ["x"]=relativeX+(self.brush[i][1]*32), 
+         ["y"]=relativeY+(self.brush[i][2]*32)
+      }
+      
+      local replaced = false
+      for k, tile in pairs(self.tiles) do
+         local x = relativeX+(self.brush[i][1]*32)
+         local y = relativeY+(self.brush[i][2]*32)
+         local tileX = tonumber(tile["x"])
+         local tileY = tonumber(tile["y"])
+         if x == tileX and y == tileY then
+            self.tiles[k] = newTile
+            replaced = true
          end
-
-         if not replaced then self.tiles[#self.tiles+1] = newTile end
       end
+
+      if not replaced then self.tiles[#self.tiles+1] = newTile end
    end
 
    self.lastUpdated = {relativeX, relativeY}
 end
 
 function Map:draw()
-   love.graphics.setColor(1,1,1, 1)
+   love.graphics.setColor(1,1,1)
    love.graphics.draw(grid, self.gridQuad, self.x, self.y)
    for k, tile in pairs(self.tiles) do
       local tilesheet = tile["tilesheet"]
@@ -113,7 +111,6 @@ function Map:draw()
       local y = tile["y"]
       love.graphics.draw(tileSheets[tilesheet], quad, x, y)
    end
-   love.graphics.setColor(1,1,1)
 end
 
 function Map:mousepressed(x, y, button, istouch)
@@ -140,9 +137,11 @@ function Map:save(project)
       local tilesheet = tile["tilesheet"]
       local quadX = tile["quadX"]
       local quadY = tile["quadY"]
+      local quadW = tile["quadW"]
+      local quadH = tile["quadH"]
       local x = tile["x"]
       local y = tile["y"]
-      file:write(id..","..tilesheet..","..quadX..","..quadY..","..x..","..y.."\n")
+      file:write(id..","..tilesheet..","..quadX..","..quadY..","..quadW..","..quadH..","..x..","..y.."\n")
    end
 
   file:close()
@@ -164,11 +163,13 @@ function Map:load(project)
       newTiles[#newTiles+1] = {
          ["id"]=lineSplit[1],
          ["tilesheet"]=lineSplit[2],
-         ["quad"]=love.graphics.newQuad(lineSplit[3], lineSplit[4], 32, 32, tileSheets[lineSplit[2]]),
+         ["quad"]=love.graphics.newQuad(lineSplit[3], lineSplit[4], lineSplit[5], lineSplit[6], tileSheets[lineSplit[2]]),
          ["quadX"]=lineSplit[3], 
          ["quadY"]=lineSplit[4],
-         ["x"]=lineSplit[5], 
-         ["y"]=lineSplit[6]
+         ["quadW"]=lineSplit[5], 
+         ["quadH"]=lineSplit[6], 
+         ["x"]=lineSplit[7], 
+         ["y"]=lineSplit[8]
       }
    end
 
