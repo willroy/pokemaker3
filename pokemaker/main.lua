@@ -38,9 +38,6 @@ end
 
 function love.keypressed(key, code)
 	current:keypressed(key, code)
-	if key == "escape" then
-      love.event.push("quit")
-    end
 end
 
 function love.wheelmoved(x, y)

@@ -1,10 +1,12 @@
 require "lfs"
 
 local grid = love.graphics.newImage("assets/game/grid.png")
+local pencil = love.graphics.newImage("assets/game/pencil.png")
+local brush = love.graphics.newImage("assets/game/pen.png")
 
 local brushes = {
    ["pencil"]={{0,0}},
-   ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
+   ["brush"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1}}
 }
 
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation"}
@@ -72,9 +74,15 @@ function Map:removeTile()
    local newTiles = {}
 
    for k, tile in pairs(self.tiles) do
-      local x = tonumber(tile["x"])
-      local y = tonumber(tile["y"])
-      if not ( x == relativeX and y == relativeY ) then
+      local found = false
+      for i = 1, #self.brush do
+         local brushX = relativeX+(self.brush[i][1]*32)
+         local brushY = relativeY+(self.brush[i][2]*32)
+         local x = tonumber(tile["x"])
+         local y = tonumber(tile["y"])
+         if ( x == brushX and y == brushY ) then found = true end
+      end
+      if not found then
          newTiles[#newTiles+1] = tile
          newTiles[#newTiles]["id"] = #newTiles
       end
@@ -100,11 +108,13 @@ function Map:placeTile()
    local selectedTiles = palette:getSelected()
    local selectedTileSheet = selectedTiles[1]
    local selectedTiles = selectedTiles[2]
+   local brush = self.brush
+   if #selectedTiles > 1 then brush = brushes["pencil"] end
 
    for s = 1, #selectedTiles do
-      for i = 1, #self.brush do
-         local x = relativeX+(self.brush[i][1]*32)+(selectedTiles[s][3]*32)
-         local y = relativeY+(self.brush[i][2]*32)+(selectedTiles[s][4]*32)
+      for i = 1, #brush do
+         local x = relativeX+(brush[i][1]*32)+(selectedTiles[s][3]*32)
+         local y = relativeY+(brush[i][2]*32)+(selectedTiles[s][4]*32)
          local newTile = {
             ["tilesheet"]=selectedTileSheet,
             ["id"] = #self.tiles+1,
@@ -143,7 +153,33 @@ function Map:draw()
       local y = tile["y"]
       love.graphics.draw(tileSheets[tilesheet], quad, x, y)
    end
+
+   local x, y = love.mouse.getPosition()
+   if x > self.x and x < (self.x+self.width) then 
+      if y > self.y and y < (self.y+self.height) then
+         love.graphics.setColor(0.4,0.4,0.4)
+         local relativeX = (math.floor((x)/32)*32+5)
+         local relativeY = (math.floor((y)/32)*32-14)
+         local relativeW = 32
+         local relativeH = 32
+         if self.brush == brushes["brush"] then
+            relativeX = relativeX - 32
+            relativeY = relativeY - 32
+            relativeW = 96
+            relativeH = 96
+         end
+         love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
+      end
+   end
+
    love.graphics.setColor(1,1,1)
+
+   self:drawToolBar()
+end
+
+function Map:drawToolBar()
+   if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 330, 15, 1.5) end
+   if self.brush == brushes["brush"] then love.graphics.draw(brush, 330, 15, 1.5) end
 end
 
 function Map:mousepressed(x, y, button, istouch)
@@ -153,6 +189,10 @@ function Map:mousereleased(x, y, button, istouch)
 end
 
 function Map:keypressed(key, code)
+   if key == "b" then
+      if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
+      else self.brush = brushes["pencil"] end
+   end
 end
 
 function Map:wheelmoved(x, y)

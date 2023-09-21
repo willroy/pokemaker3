@@ -71,6 +71,11 @@ function Game:mousereleased(x, y, button, istouch)
 end
 
 function Game:keypressed(key, code)
+   if key == "escape" then
+      self:save()
+      setCurrent("menu")
+   end
+
    if key == "s" then self:save() end
    if key == "l" then self:load() end
    if key == "right" and self.selectedTileSheet < 14 then

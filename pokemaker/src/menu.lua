@@ -36,6 +36,9 @@ function Menu:mousereleased(x, y, button, istouch)
 end
 
 function Menu:keypressed(key, code)
+   if key == "escape" then
+      love.event.push("quit")
+   end
 end
 
 function Menu:wheelmoved(x, y)
