@@ -1,7 +1,8 @@
 TODO
 
-1. Update multi tile select to:
-	Actually add a tile entry per multi tile
+0. sort out mouse check in tile not accurate
+
+1. Undo
 
 2. Collision handling
 	Create collision.lua

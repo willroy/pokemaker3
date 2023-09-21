@@ -46,12 +46,42 @@ function Map:init(id, x, y, width, height)
    self.gridQuad = love.graphics.newQuad(0, 0, self.width, self.height, grid)
 
    self.lastUpdated = {}
+   self.lastDeleted = {}
 
    self.brush = brushes["pencil"]
 end
 
 function Map:update(dt)
+   self:removeTile()
    self:placeTile()
+end
+
+function Map:removeTile()
+   local x, y = love.mouse.getPosition()
+   local pressed = love.mouse.isDown(2)
+
+   if not pressed then return false end
+   if x < self.x or x > (self.x+self.width) then return false end
+   if y < self.y or y > (self.y+self.height) then return false end
+
+   local relativeX = math.floor((x)/32)*32+5
+   local relativeY = math.floor((y)/32)*32-14
+
+   if self.lastDeleted[1] == relativeX and self.lastDeleted[2] == relativeY then return false end
+
+   local newTiles = {}
+
+   for k, tile in pairs(self.tiles) do
+      local x = tonumber(tile["x"])
+      local y = tonumber(tile["y"])
+      if not ( x == relativeX and y == relativeY ) then
+         newTiles[#newTiles+1] = tile
+         newTiles[#newTiles]["id"] = #newTiles
+      end
+   end
+
+   self.tiles = newTiles
+   self.lastDeleted = {relativeX, relativeY}
 end
 
 function Map:placeTile()
@@ -181,7 +211,4 @@ function Map:FolderExists(folder)
   else
     return false
   end
-end
-
-function Map:getTileToDelete(x, y)
 end
