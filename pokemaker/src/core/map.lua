@@ -3,10 +3,12 @@ require "lfs"
 local grid = love.graphics.newImage("assets/game/grid.png")
 local pencil = love.graphics.newImage("assets/game/pencil.png")
 local brush = love.graphics.newImage("assets/game/pen.png")
+local brushXL = love.graphics.newImage("assets/game/pen.png")
 
 local brushes = {
    ["pencil"]={{0,0}},
-   ["brush"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1}}
+   ["brush"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1}},
+   ["brushXL"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1},{-2,-2},{-2,-1},{-2,0},{-2,1},{-2,2},{-1,2},{0,2},{1,2},{2,2},{2,1},{2,0},{2,-1},{2,-2},{1,-2},{0,-2},{-1,-2}}
 }
 
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation"}
@@ -168,6 +170,12 @@ function Map:draw()
             relativeW = 96
             relativeH = 96
          end
+         if self.brush == brushes["brushXL"] then
+            relativeX = relativeX - 64
+            relativeY = relativeY - 64
+            relativeW = 160
+            relativeH = 160
+         end
          love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
       end
    end
@@ -180,6 +188,7 @@ end
 function Map:drawToolBar()
    if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 330, 15, 1.5) end
    if self.brush == brushes["brush"] then love.graphics.draw(brush, 330, 15, 1.5) end
+   if self.brush == brushes["brushXL"] then love.graphics.draw(brushXL, 330, 15, 1.5) end
 end
 
 function Map:mousepressed(x, y, button, istouch)
@@ -191,7 +200,8 @@ end
 function Map:keypressed(key, code)
    if key == "b" then
       if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
-      else self.brush = brushes["pencil"] end
+      elseif self.brush == brushes["brush"] then self.brush = brushes["brushXL"]
+      elseif self.brush == brushes["brushXL"] then self.brush = brushes["pencil"] end
    end
 end
 
