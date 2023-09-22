@@ -35,6 +35,8 @@ function Map:init(id, x, y, width, height)
    self.backColor = {1,1,1}
    self.layers = {}
    self.collisions = {}
+   self.zindexes = {}
+   self.zindextiles = {}
 end
 
 function Map:update(dt)
@@ -53,6 +55,17 @@ function Map:draw()
    end
 end
 
+function Map:drawZIndexes()
+   love.graphics.setColor(1,1,1)
+   for k, tile in pairs(self.zindextiles) do
+      local tilesheet = tile["tilesheet"]
+      local quad = tile["quad"]
+      local x = tile["x"]
+      local y = tile["y"]
+      love.graphics.draw(tileSheets[tilesheet], quad, x+self.x, y+self.y)
+   end
+end
+
 function Map:mousepressed(x, y, button, istouch)
 end
 
@@ -66,6 +79,7 @@ function Map:wheelmoved(x, y)
 end
 
 function Map:load(project)
+   self:loadZIndex()
    self:loadTiles()
 end
 
@@ -79,11 +93,13 @@ function Map:loadTiles()
       if f ~= nil then
          newLayers[i] = {}
          for line in io.lines(file) do
+            local isInZ = false
             local lineSplit = {}
             for str in string.gmatch(line, "([^,]+)") do
                table.insert(lineSplit, str)
             end
-            newLayers[i][#newLayers[i]+1] = {
+
+            local newTile = {
                ["id"]=lineSplit[1],
                ["tilesheet"]=lineSplit[2],
                ["quad"]=love.graphics.newQuad(lineSplit[3], lineSplit[4], 32, 32, tileSheets[lineSplit[2]]),
@@ -92,11 +108,50 @@ function Map:loadTiles()
                ["x"]=lineSplit[5], 
                ["y"]=lineSplit[6]
             }
+
+            for a = 1, #self.zindexes do
+               if i == tonumber(self.zindexes[a]["layer"]) then
+                  local tileXY = {["x"]=tonumber(lineSplit[5]),["y"]=tonumber(lineSplit[6])}
+                  local zindexXY = {["x"]=tonumber(self.zindexes[a]["x"]),["y"]=tonumber(self.zindexes[a]["y"])}
+
+                  if tileXY["x"] == zindexXY["x"] and tileXY["y"] == zindexXY["y"] then
+                     self.zindextiles[#self.zindextiles+1] = newTile
+                     isInZ = true
+                  end
+               end
+            end
+
+            if not isInZ then
+               newLayers[i][#newLayers[i]+1] = newTile
+            end
          end
       end
    end
 
    self.layers = newLayers
+end
+
+function Map:loadZIndex()
+   local file = "/home/will-roy/dev/pokemon3/pokemon/db/zindexes.snorlax"
+   local f = io.open(file, "r")
+   if f then f:close() end
+   if f == nil then return end
+   
+   local newZindexes = {}
+   for line in io.lines(file) do
+      local lineSplit = {}
+      for str in string.gmatch(line, "([^,]+)") do
+         table.insert(lineSplit, str)
+      end
+
+      newZindexes[#newZindexes+1] = {
+         ["layer"]=lineSplit[1],
+         ["x"]=lineSplit[2],
+         ["y"]=lineSplit[3]
+      }
+   end
+
+   self.zindexes = newZindexes
 end
 
 function Map:move(dir)

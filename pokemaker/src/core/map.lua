@@ -1,6 +1,7 @@
 require "lfs"
 
 local collisionREQ = require("src/core/collision")
+local zindexREQ = require("src/core/z-index")
 
 local grid = love.graphics.newImage("assets/game/grid.png")
 local pencil = love.graphics.newImage("assets/game/pencil.png")
@@ -68,6 +69,8 @@ function Map:init(id, x, y, width, height)
    self.mode = "tiles"
    self.collision = Collision:new()
    self.collisionINIT = false
+   self.zindex = Zindex:new()
+   self.zindexINIT = false
 end
 
 function Map:update(dt)
@@ -83,6 +86,14 @@ function Map:update(dt)
          self.collisionINIT = true
       end
       self.collision:update(dt)
+   elseif self.mode == "zindex" then
+      if self.zindexINIT == false then 
+         self.zindex:init(self.id, self.x, self.y, self.width, self.height)
+         self.zindex:load(self.project)
+         palette:disable()
+         self.zindexINIT = true
+      end
+      self.zindex:update(dt)
    end
 end
 
@@ -92,8 +103,6 @@ function Map:draw()
    for k1, layer in pairs(self.layers) do
       if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
       else love.graphics.setColor(1,1,1,0.6) end
-      -- if self.mode ~= "tiles" then love.graphics.setColor(1,1,1,0.6) end
-
       for k2, tile in pairs(layer) do
          local tilesheet = tile["tilesheet"]
          local quad = tile["quad"]
@@ -135,18 +144,24 @@ function Map:draw()
       self:drawToolBar()
    elseif self.mode == "collision" then
       self.collision:draw()
+   elseif self.mode == "zindex" then
+      self.zindex:draw()
    end
 end
 
 function Map:mousepressed(x, y, button, istouch)
    if self.mode == "collision" then
       self.collision:mousepressed(x, y, button, istouch)
+   elseif self.mode == "zindex" then
+      self.zindex:mousepressed(x, y, button, istouch)
    end
 end
 
 function Map:mousereleased(x, y, button, istouch)
    if self.mode == "collision" then
       self.collision:mousereleased(x, y, button, istouch)
+   elseif self.mode == "zindex" then
+      self.zindex:mousereleased(x, y, button, istouch)
    end
 end
 
@@ -168,8 +183,11 @@ function Map:keypressed(key, code)
       if key == "o" then self.onionSkin = not self.onionSkin end
       if key == "h" then self.helpMenu = not self.helpMenu end
       if key == "c" then self.mode = "collision" end
+      if key == "z" then self.mode = "zindex" end
    elseif self.mode == "collision" then
       self.collision:keypressed(key, code)
+   elseif self.mode == "zindex" then
+      self.zindex:keypressed(key, code)
    end
 end
 
@@ -358,4 +376,12 @@ function Map:FolderExists(folder)
   else
     return false
   end
+end
+
+function Map:setLayer(layer)
+   self.layer = layer
+end
+
+function Map:setOnionSkin(onion)
+   self.onionSkin = onion
 end

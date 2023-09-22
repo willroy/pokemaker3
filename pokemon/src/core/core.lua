@@ -14,16 +14,16 @@ function Core:new(o)
 end
 
 function Core:init()
-   map:init(1, 0, 0, 1300, 1000)
+   map:init(1, -32, -32, 1300, 1000)
    map:load()
 
-   player:init(614, 458)
+   player:init(612, 456)
 
    self.move = {["busy"]=false, ["dir"]={0,0}, ["tick"]=0, ["startTick"]=0}
 
    self.collisions = self:loadCollision()
 
-   self.centerPos = {["x"]=math.floor((614)/32)*32+5,["y"]=math.floor((458+32)/32)*32-14}
+   self.debug = false
 end
 
 function Core:update(dt)
@@ -86,7 +86,27 @@ end
 function Core:draw()
    map:draw(dt)
    player:draw(dt)
+   map:drawZIndexes()
    love.graphics.setColor(1,1,1)
+
+   if self.debug then self:drawDebug() end
+end
+
+function Core:drawDebug()
+   local mapPos = map:getPos()
+   local playerPos = player:getPos()
+
+   local relativePos = {["x"]=math.floor(((playerPos["x"]-mapPos["x"]))/32)*32+5,["y"]=math.floor(((playerPos["y"]-mapPos["y"]))/32)*32+18}
+
+   love.graphics.setColor(1,1,1, 0.5)
+   for k, tile in pairs(self.collisions) do
+      local x = mapPos["x"]+tile["x"]
+      local y = mapPos["y"]+tile["y"]
+      love.graphics.setColor(1,0.8,0.8, 0.7)
+      love.graphics.rectangle("fill", x, y, 32, 32)
+      love.graphics.setColor(1,0.8,0.4, 0.7)
+      love.graphics.rectangle("fill", relativePos["x"]+mapPos["x"], relativePos["y"]+mapPos["y"], 32, 32)
+   end
 end
 
 function Core:mousepressed(x, y, button, istouch)
@@ -100,6 +120,7 @@ function Core:mousereleased(x, y, button, istouch)
 end
 
 function Core:keypressed(key, code)
+   if key == "'" then self.debug = not self.debug end
    map:keypressed(key, code)
    player:keypressed(key, code)
 end
