@@ -28,9 +28,12 @@ function Palette:init(id, x, y, width, height, tileSheet, tileSheetText)
    self.selectionW = 32
    self.selectionH = 32
    self.startSquare = {}
+
+   self.disabled = false
 end
 
 function Palette:update(dt)
+   if self.disabled then return end
    local x, y = love.mouse.getPosition()
    self:selectMultipleTiles(x, y, button)
 end
@@ -57,6 +60,7 @@ function Palette:selectMultipleTiles(x, y)
 end
 
 function Palette:draw()
+   if self.disabled then return end
    love.graphics.draw(grid, self.gridQuad, self.x, self.y)
    love.graphics.draw(self.tileSheet, self.x, self.y+self.tileSheetOffset)
 	love.graphics.setColor(0.9, 0.2, 0.2,0.9)
@@ -66,6 +70,7 @@ function Palette:draw()
 end
 
 function Palette:mousepressed(x, y, button, istouch)
+   if self.disabled then return end
    self:selectTile(x, y, button)
 end
 
@@ -83,6 +88,7 @@ function Palette:selectTile(x, y, button)
 end
 
 function Palette:mousereleased(x, y, button, istouch)
+   if self.disabled then return end
    if #self.startSquare ~= 0 then
       self.selectedTile["x"] = self.startSquare[1]
       self.selectedTile["y"] = self.startSquare[2]
@@ -93,9 +99,11 @@ function Palette:mousereleased(x, y, button, istouch)
 end
 
 function Palette:keypressed(key, code)
+   if self.disabled then return end
 end
 
 function Palette:wheelmoved(x, y)
+   if self.disabled then return end
    local mouseX, mouseY = love.mouse.getPosition()
    local lctrlDown = love.keyboard.isDown("lctrl")
 
@@ -128,6 +136,7 @@ end
 function Palette:setTileSheet(tilesheet, tilesheetText)
    self.tileSheet = tilesheet
    self.tileSheetText = tilesheetText
+   self.tileSheetOffset = 32
 end
 
 function Palette:getCoordsInQuad(x, y, w, h)
@@ -142,4 +151,8 @@ function Palette:getCoordsInQuad(x, y, w, h)
    end
 
    return tiles
+end
+
+function Palette:disable()
+   self.disabled = true
 end

@@ -1,8 +1,7 @@
 local mapREQ = require("src/core/map")
 local paletteREQ = require("src/core/palette")
 
-local background = love.graphics.newImage("assets/game/background.png")
-local tileSheetNames = {"outside_buildings","outside_ground","outside_vegetation","outside_rocks","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","interior_electronics","outside_items","outside_misc"}
+local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
    ["interior_electronics"] = love.graphics.newImage("assets/tilesheets/interior-electronics.png"),
    ["interior_flooring"] = love.graphics.newImage("assets/tilesheets/interior-flooring.png"),
@@ -17,7 +16,8 @@ local tileSheets = {
    ["outside_items"] = love.graphics.newImage("assets/tilesheets/outside-items.png"),
    ["outside_misc"] = love.graphics.newImage("assets/tilesheets/outside-misc.png"),
    ["outside_rocks"] = love.graphics.newImage("assets/tilesheets/outside-rocks.png"),
-   ["outside_vegetation"] = love.graphics.newImage("assets/tilesheets/outside-vegetation.png")
+   ["outside_vegetation"] = love.graphics.newImage("assets/tilesheets/outside-vegetation.png"),
+   ["text"] = love.graphics.newImage("assets/tilesheets/text.png")
 }
 
 palette = Palette:new()
@@ -54,10 +54,8 @@ function Game:update(dt)
 end
 
 function Game:draw()
-   love.graphics.draw(background, 0, 0)
-
-   palette:draw(dt)
    map:draw(dt)
+   palette:draw(dt)
 end
 
 function Game:mousepressed(x, y, button, istouch)
@@ -78,7 +76,7 @@ function Game:keypressed(key, code)
 
    -- if key == "s" then self:save() end
    -- if key == "l" then self:load() end
-   if key == "right" and self.selectedTileSheet < 14 then
+   if key == "right" and self.selectedTileSheet < #tileSheetNames then
       self.selectedTileSheet = self.selectedTileSheet + 1
       palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
    end

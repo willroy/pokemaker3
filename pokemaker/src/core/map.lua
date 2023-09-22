@@ -1,5 +1,7 @@
 require "lfs"
 
+local collisionREQ = require("src/core/collision")
+
 local grid = love.graphics.newImage("assets/game/grid.png")
 local pencil = love.graphics.newImage("assets/game/pencil.png")
 local brush = love.graphics.newImage("assets/game/pen.png")
@@ -7,13 +9,15 @@ local brushXL = love.graphics.newImage("assets/game/penXL.png")
 local onionON = love.graphics.newImage("assets/game/onionON.png")
 local onionOFF = love.graphics.newImage("assets/game/onionOFF.png")
 
+local background = love.graphics.newImage("assets/game/background.png")
+
 local brushes = {
    ["pencil"]={{0,0}},
    ["brush"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1}},
    ["brushXL"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1},{-2,-2},{-2,-1},{-2,0},{-2,1},{-2,2},{-1,2},{0,2},{1,2},{2,2},{2,1},{2,0},{2,-1},{2,-2},{1,-2},{0,-2},{-1,-2}}
 }
 
-local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation"}
+local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
    ["interior_electronics"] = love.graphics.newImage("assets/tilesheets/interior-electronics.png"),
    ["interior_flooring"] = love.graphics.newImage("assets/tilesheets/interior-flooring.png"),
@@ -28,7 +32,8 @@ local tileSheets = {
    ["outside_items"] = love.graphics.newImage("assets/tilesheets/outside-items.png"),
    ["outside_misc"] = love.graphics.newImage("assets/tilesheets/outside-misc.png"),
    ["outside_rocks"] = love.graphics.newImage("assets/tilesheets/outside-rocks.png"),
-   ["outside_vegetation"] = love.graphics.newImage("assets/tilesheets/outside-vegetation.png")
+   ["outside_vegetation"] = love.graphics.newImage("assets/tilesheets/outside-vegetation.png"),
+   ["text"] = love.graphics.newImage("assets/tilesheets/text.png")
 }
 
 Map = {}
@@ -47,23 +52,137 @@ function Map:init(id, x, y, width, height)
    self.width = width or 0
    self.height = height or 0
    self.backColor = {1,1,1}
+
+   self.project = ""
+
+   self.gridQuad = love.graphics.newQuad(0, 0, self.width, self.height, grid)
+   self.brush = brushes["pencil"]
    self.layers = {{}}
    self.layer = 1
    self.onionSkin = false
-
-   self.gridQuad = love.graphics.newQuad(0, 0, self.width, self.height, grid)
+   self.helpMenu = false
 
    self.lastUpdated = {}
    self.lastDeleted = {}
 
-   self.brush = brushes["pencil"]
-
-   self.helpMenu = false
+   self.mode = "tiles"
+   self.collision = Collision:new()
+   self.collisionINIT = false
 end
 
 function Map:update(dt)
-   self:removeTile()
-   self:placeTile()
+   if self.mode == "tiles" then
+      self:move()
+      self:removeTile()
+      self:placeTile()
+   elseif self.mode == "collision" then
+      if self.collisionINIT == false then 
+         self.collision:init(self.id, self.x, self.y, self.width, self.height)
+         self.collision:load(self.project)
+         palette:disable()
+         self.collisionINIT = true
+      end
+      self.collision:update(dt)
+   end
+end
+
+function Map:draw()
+   love.graphics.setColor(1,1,1)
+   love.graphics.draw(grid, self.gridQuad, self.x, self.y)
+   for k1, layer in pairs(self.layers) do
+      if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
+      else love.graphics.setColor(1,1,1,0.6) end
+      -- if self.mode ~= "tiles" then love.graphics.setColor(1,1,1,0.6) end
+
+      for k2, tile in pairs(layer) do
+         local tilesheet = tile["tilesheet"]
+         local quad = tile["quad"]
+         local x = tile["x"]
+         local y = tile["y"]
+         love.graphics.draw(tileSheets[tilesheet], quad, x, y)
+      end
+   end
+
+   love.graphics.draw(background, 0, 0)
+
+   local x, y = love.mouse.getPosition()
+   if x > self.x and x < (self.x+self.width) then 
+      if y > self.y and y < (self.y+self.height) then
+         love.graphics.setColor(0.4,0.4,0.4)
+         local relativeX = (math.floor((x)/32)*32+5)
+         local relativeY = (math.floor((y)/32)*32-14)
+         local relativeW = 32
+         local relativeH = 32
+         if self.brush == brushes["brush"] then
+            relativeX = relativeX - 32
+            relativeY = relativeY - 32
+            relativeW = 96
+            relativeH = 96
+         end
+         if self.brush == brushes["brushXL"] then
+            relativeX = relativeX - 64
+            relativeY = relativeY - 64
+            relativeW = 160
+            relativeH = 160
+         end
+         love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
+      end
+   end
+
+   love.graphics.setColor(1,1,1)
+
+   if self.mode == "tiles" then
+      self:drawToolBar()
+   elseif self.mode == "collision" then
+      self.collision:draw()
+   end
+end
+
+function Map:mousepressed(x, y, button, istouch)
+   if self.mode == "collision" then
+      self.collision:mousepressed(x, y, button, istouch)
+   end
+end
+
+function Map:mousereleased(x, y, button, istouch)
+   if self.mode == "collision" then
+      self.collision:mousereleased(x, y, button, istouch)
+   end
+end
+
+function Map:keypressed(key, code)
+   if self.mode == "tiles" then
+      if key == "b" then
+         if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
+         elseif self.brush == brushes["brush"] then self.brush = brushes["brushXL"]
+         elseif self.brush == brushes["brushXL"] then self.brush = brushes["pencil"] end
+      end
+
+      if key == "[" and self.layer > 1 then
+         self.layer = self.layer - 1
+      elseif key == "]" then
+         self.layer = self.layer + 1
+         if self.layers[self.layer] == nil then self.layers[self.layer] = {} end 
+      end
+
+      if key == "o" then self.onionSkin = not self.onionSkin end
+      if key == "h" then self.helpMenu = not self.helpMenu end
+      if key == "c" then self.mode = "collision" end
+   elseif self.mode == "collision" then
+      self.collision:keypressed(key, code)
+   end
+end
+
+function Map:wheelmoved(x, y)
+end
+
+-- UPDATE METHODS --
+
+function Map:move()
+   if love.keyboard.isDown("w") then self.y = self.y + 16
+   elseif love.keyboard.isDown("a") then self.x = self.x + 16
+   elseif love.keyboard.isDown("s") then self.y = self.y - 16
+   elseif love.keyboard.isDown("d") then self.x = self.x - 16 end
 end
 
 function Map:removeTile()
@@ -119,6 +238,7 @@ function Map:placeTile()
    local selectedTiles = selectedTiles[2]
    local brush = self.brush
    if #selectedTiles > 1 then brush = brushes["pencil"] end
+   if self.layers[self.layer] == nil then self.layers[self.layer] = {} end
 
    for s = 1, #selectedTiles do
       for i = 1, #brush do
@@ -152,50 +272,7 @@ function Map:placeTile()
    self.lastUpdated = {relativeX, relativeY}
 end
 
-function Map:draw()
-   love.graphics.setColor(1,1,1)
-   love.graphics.draw(grid, self.gridQuad, self.x, self.y)
-   for k1, layer in pairs(self.layers) do
-      if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
-      else love.graphics.setColor(1,1,1,0.6) end
-
-      for k2, tile in pairs(layer) do
-         local tilesheet = tile["tilesheet"]
-         local quad = tile["quad"]
-         local x = tile["x"]
-         local y = tile["y"]
-         love.graphics.draw(tileSheets[tilesheet], quad, x, y)
-      end
-   end
-
-   local x, y = love.mouse.getPosition()
-   if x > self.x and x < (self.x+self.width) then 
-      if y > self.y and y < (self.y+self.height) then
-         love.graphics.setColor(0.4,0.4,0.4)
-         local relativeX = (math.floor((x)/32)*32+5)
-         local relativeY = (math.floor((y)/32)*32-14)
-         local relativeW = 32
-         local relativeH = 32
-         if self.brush == brushes["brush"] then
-            relativeX = relativeX - 32
-            relativeY = relativeY - 32
-            relativeW = 96
-            relativeH = 96
-         end
-         if self.brush == brushes["brushXL"] then
-            relativeX = relativeX - 64
-            relativeY = relativeY - 64
-            relativeW = 160
-            relativeH = 160
-         end
-         love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
-      end
-   end
-
-   love.graphics.setColor(1,1,1)
-
-   self:drawToolBar()
-end
+-- DRAW METHODS --
 
 function Map:drawToolBar()
    if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 330, 15, 1.5) end
@@ -219,32 +296,7 @@ function Map:drawToolBar()
    love.graphics.setColor(1,1,1)
 end
 
-function Map:mousepressed(x, y, button, istouch)
-end
-
-function Map:mousereleased(x, y, button, istouch)
-end
-
-function Map:keypressed(key, code)
-   if key == "b" then
-      if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
-      elseif self.brush == brushes["brush"] then self.brush = brushes["brushXL"]
-      elseif self.brush == brushes["brushXL"] then self.brush = brushes["pencil"] end
-   end
-
-   if key == "[" and self.layer > 1 then
-      self.layer = self.layer - 1
-   elseif key == "]" then
-      self.layer = self.layer + 1
-      if self.layers[self.layer] == nil then self.layers[self.layer] = {} end 
-   end
-
-   if key == "o" then self.onionSkin = not self.onionSkin end
-   if key == "h" then self.helpMenu = not self.helpMenu end
-end
-
-function Map:wheelmoved(x, y)
-end
+-- SAVE LOAD --
 
 function Map:save(project)
    if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
@@ -269,6 +321,7 @@ function Map:save(project)
 end
 
 function Map:load(project)
+   self.project = project
    local newLayers = {}
 
    for i = 1, 10 do

@@ -49,3 +49,7 @@ end
 
 function Player:wheelmoved(x, y)
 end
+
+function Player:getPos()
+	return {["x"]=self.x,["y"]=self.y}
+end

@@ -11,7 +11,6 @@ local current = game
 function love.load()
 	love.window.setTitle("pokemaker3")
 	love.window.setMode(1300, 1000)
-	love.graphics.setBackgroundColor(1,1,1)
 	local font = love.graphics.newFont(16)
 	love.graphics.setFont(font)
 	io.stdout:setvbuf("no")
