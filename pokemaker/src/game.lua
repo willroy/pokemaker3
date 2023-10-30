@@ -32,7 +32,7 @@ function Game:new(o)
    return o
 end
 
-function Game:init(project, new)
+function Game:init(mainX, mainY, project, new)
    self.project = project or "project1"
 
    if new then
@@ -40,9 +40,9 @@ function Game:init(project, new)
       self:save()
    end
 
-   palette:init(1, 2, 2, 256, 985, tileSheets["outside_buildings"], "outside_buildings")
+   palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
-   map:init(2, 260, 50, 1036, 935)
+   map:init(1, 38, 38, mainX-40, mainY-32)
    map:load(self.project)
 
    self.selectedTileSheet = 0

@@ -8,15 +8,18 @@ local icon = love.image.newImageData("assets/icon.png");
 
 local current = menu
 
+local mainX = 1300
+local mainY = 1000
+
 function love.load()
 	love.window.setTitle("pokemaker3")
-	love.window.setMode(1300, 1000)
+	love.window.setMode(mainX, mainY, {resizable=true})
 	love.graphics.setBackgroundColor(1,1,1)
 	local font = love.graphics.newFont(16)
 	love.graphics.setFont(font)
 	io.stdout:setvbuf("no")
  	love.window.setIcon(icon);
-	current:init()
+	current:init(mainX, mainY)
 	-- openFile("project1")
 end
 
@@ -56,5 +59,5 @@ end
 
 function openFile(project)
 	current = game
-	current:init(project)
+	current:init(mainX, mainY, project)
 end

@@ -1,6 +1,14 @@
 local mapREQ = require("src/core/map")
 local playerREQ = require("src/core/player")
 
+local wasdIMG = love.graphics.newImage("assets/wasd.png")
+local wasd = {
+   ["w"]={["off"]=love.graphics.newQuad(0,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(0,32,32,32,wasdIMG)},
+   ["a"]={["off"]=love.graphics.newQuad(32,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(32,32,32,32,wasdIMG)},
+   ["s"]={["off"]=love.graphics.newQuad(64,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(64,32,32,32,wasdIMG)},
+   ["d"]={["off"]=love.graphics.newQuad(96,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(96,32,32,32,wasdIMG)}
+}
+
 map = Map:new()
 player = Player:new()
 
@@ -104,9 +112,19 @@ function Core:drawDebug()
       local y = mapPos["y"]+tile["y"]
       love.graphics.setColor(1,0.8,0.8, 0.7)
       love.graphics.rectangle("fill", x, y, 32, 32)
-      love.graphics.setColor(1,0.8,0.4, 0.7)
+      love.graphics.setColor(1,0.8,0.4)
       love.graphics.rectangle("fill", relativePos["x"]+mapPos["x"], relativePos["y"]+mapPos["y"], 32, 32)
    end
+
+   love.graphics.setColor(1,1,1)
+   if love.keyboard.isDown("w") then love.graphics.draw(wasdIMG, wasd["w"]["on"], 72, 6)
+   else love.graphics.draw(wasdIMG, wasd["w"]["off"], 72, 6) end
+   if love.keyboard.isDown("a") then love.graphics.draw(wasdIMG, wasd["a"]["on"], 38, 38)
+   else love.graphics.draw(wasdIMG, wasd["a"]["off"], 38, 38) end
+   if love.keyboard.isDown("s") then love.graphics.draw(wasdIMG, wasd["s"]["on"], 72, 38)
+   else love.graphics.draw(wasdIMG, wasd["s"]["off"], 72, 38) end
+   if love.keyboard.isDown("d") then love.graphics.draw(wasdIMG, wasd["d"]["on"], 104, 38)
+   else love.graphics.draw(wasdIMG, wasd["d"]["off"], 104, 38) end
 end
 
 function Core:mousepressed(x, y, button, istouch)

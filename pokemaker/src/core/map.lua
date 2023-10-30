@@ -50,6 +50,8 @@ function Map:init(id, x, y, width, height)
    self.id = id or 0
    self.x = x or 0
    self.y = y or 0
+   self.moveX = 0
+   self.moveY = 0
    self.width = width or 0
    self.height = height or 0
    self.backColor = {1,1,1}
@@ -71,6 +73,8 @@ function Map:init(id, x, y, width, height)
    self.collisionINIT = false
    self.zindex = Zindex:new()
    self.zindexINIT = false
+
+   self.start = false
 end
 
 function Map:update(dt)
@@ -97,58 +101,6 @@ function Map:update(dt)
    end
 end
 
-function Map:draw()
-   love.graphics.setColor(1,1,1)
-   love.graphics.draw(grid, self.gridQuad, self.x, self.y)
-   for k1, layer in pairs(self.layers) do
-      if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
-      else love.graphics.setColor(1,1,1,0.6) end
-      for k2, tile in pairs(layer) do
-         local tilesheet = tile["tilesheet"]
-         local quad = tile["quad"]
-         local x = tile["x"]
-         local y = tile["y"]
-         love.graphics.draw(tileSheets[tilesheet], quad, x, y)
-      end
-   end
-
-   love.graphics.draw(background, 0, 0)
-
-   local x, y = love.mouse.getPosition()
-   if x > self.x and x < (self.x+self.width) then 
-      if y > self.y and y < (self.y+self.height) then
-         love.graphics.setColor(0.4,0.4,0.4)
-         local relativeX = (math.floor((x)/32)*32+5)
-         local relativeY = (math.floor((y)/32)*32-14)
-         local relativeW = 32
-         local relativeH = 32
-         if self.brush == brushes["brush"] then
-            relativeX = relativeX - 32
-            relativeY = relativeY - 32
-            relativeW = 96
-            relativeH = 96
-         end
-         if self.brush == brushes["brushXL"] then
-            relativeX = relativeX - 64
-            relativeY = relativeY - 64
-            relativeW = 160
-            relativeH = 160
-         end
-         love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
-      end
-   end
-
-   love.graphics.setColor(1,1,1)
-
-   if self.mode == "tiles" then
-      self:drawToolBar()
-   elseif self.mode == "collision" then
-      self.collision:draw()
-   elseif self.mode == "zindex" then
-      self.zindex:draw()
-   end
-end
-
 function Map:mousepressed(x, y, button, istouch)
    if self.mode == "collision" then
       self.collision:mousepressed(x, y, button, istouch)
@@ -158,6 +110,7 @@ function Map:mousepressed(x, y, button, istouch)
 end
 
 function Map:mousereleased(x, y, button, istouch)
+   self.start = true
    if self.mode == "collision" then
       self.collision:mousereleased(x, y, button, istouch)
    elseif self.mode == "zindex" then
@@ -197,10 +150,10 @@ end
 -- UPDATE METHODS --
 
 function Map:move()
-   if love.keyboard.isDown("w") then self.y = self.y + 16
-   elseif love.keyboard.isDown("a") then self.x = self.x + 16
-   elseif love.keyboard.isDown("s") then self.y = self.y - 16
-   elseif love.keyboard.isDown("d") then self.x = self.x - 16 end
+   if love.keyboard.isDown("w") then self.moveY = self.moveY + 16
+   elseif love.keyboard.isDown("a") then self.moveX = self.moveX + 16
+   elseif love.keyboard.isDown("s") then self.moveY = self.moveY - 16
+   elseif love.keyboard.isDown("d") then self.moveX = self.moveX - 16 end
 end
 
 function Map:removeTile()
@@ -242,6 +195,7 @@ function Map:placeTile()
    local x, y = love.mouse.getPosition()
    local pressed = love.mouse.isDown(1)
 
+   if not self.start then return end
    if not pressed then return false end
    if x < self.x or x > (self.x+self.width) then return false end
    if y < self.y or y > (self.y+self.height) then return false end
@@ -292,25 +246,91 @@ end
 
 -- DRAW METHODS --
 
-function Map:drawToolBar()
-   if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 330, 15, 1.5) end
-   if self.brush == brushes["brush"] then love.graphics.draw(brush, 330, 15, 1.5) end
-   if self.brush == brushes["brushXL"] then love.graphics.draw(brushXL, 360, 5, 1.5) end
-   if self.onionSkin then love.graphics.draw(onionON, 1140,2)
-   else love.graphics.draw(onionOFF, 1140,2) end
-   love.graphics.setColor(0,0,0)
-   love.graphics.print("Layer: "..self.layer, 1200,15)
+function Map:draw()
+   
+   self:drawMap()
+
+   if self.mode == "tiles" then
+      self:drawMenuBackground()
+      self:drawMenuBar()
+      self:drawToolBar()
+   elseif self.mode == "collision" then
+      self.collision:draw()
+   elseif self.mode == "zindex" then
+      self.zindex:draw()
+   end
+
+   if self.helpMenu then self:drawHelpMenu() end   
+end
+
+function Map:drawMap()
    love.graphics.setColor(1,1,1)
-   if self.helpMenu then
-      love.graphics.rectangle("fill", 500, 200, 300, 500)
-      love.graphics.setColor(0,0,0)
-      love.graphics.print("right: next spritesheet", 520,220)
-      love.graphics.print("left: previous spritesheet", 520,240)
-      love.graphics.print("[: down a layer", 520,260)
-      love.graphics.print("]: up a layer", 520,280)
-      love.graphics.print("b: cycle brush types", 520,300)
-      love.graphics.print("o: Onion Skin on/off", 520,320)
-   end   
+   love.graphics.draw(grid, self.gridQuad, self.x, self.y)
+   for k1, layer in pairs(self.layers) do
+      if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
+      else love.graphics.setColor(1,1,1,0.6) end
+      for k2, tile in pairs(layer) do
+         local tilesheet = tile["tilesheet"]
+         local quad = tile["quad"]
+         local x = tile["x"]
+         local y = tile["y"]
+         love.graphics.draw(tileSheets[tilesheet], quad, x, y)
+      end
+   end
+
+   local x, y = love.mouse.getPosition()
+   if x > self.x and x < (self.x+self.width) then 
+      if y > self.y and y < (self.y+self.height) then
+         love.graphics.setColor(0.4,0.4,0.4)
+         local relativeX = (math.floor((x)/32)*32+5)
+         local relativeY = (math.floor((y)/32)*32-14)
+         local relativeW = 32
+         local relativeH = 32
+         if self.brush == brushes["brush"] then
+            relativeX = relativeX - 32
+            relativeY = relativeY - 32
+            relativeW = 96
+            relativeH = 96
+         end
+         if self.brush == brushes["brushXL"] then
+            relativeX = relativeX - 64
+            relativeY = relativeY - 64
+            relativeW = 160
+            relativeH = 160
+         end
+         love.graphics.rectangle("line", relativeX, relativeY, relativeW, relativeH)
+      end
+   end
+   love.graphics.setColor(1,1,1)
+end
+
+function Map:drawMenuBackground()
+   love.graphics.setColor(0.9,0.9,0.9)
+   love.graphics.rectangle("fill", 0, 0, 40, love.graphics.getHeight())
+   love.graphics.setColor(0.8,0.8,0.8)
+   love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 40)
+   love.graphics.setColor(1,1,1)
+end
+
+function Map:drawToolBar()
+   if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 5, 100) end
+   if self.brush == brushes["brush"] then love.graphics.draw(brush, 5, 100) end
+   if self.brush == brushes["brushXL"] then love.graphics.draw(brushXL, 5, 100) end
+end
+
+function Map:drawMenuBar()
+end
+
+function Map:drawHelpMenu()
+   love.graphics.setColor(1,1,1)
+   love.graphics.rectangle("fill", 500, 200, 300, 500)
+   love.graphics.setColor(0,0,0)
+   love.graphics.print("right: next spritesheet", 520,220)
+   love.graphics.print("left: previous spritesheet", 520,240)
+   love.graphics.print("[: down a layer", 520,260)
+   love.graphics.print("]: up a layer", 520,280)
+   love.graphics.print("b: cycle brush types", 520,300)
+   love.graphics.print("o: Onion Skin on/off", 520,320)
    love.graphics.setColor(1,1,1)
 end
 

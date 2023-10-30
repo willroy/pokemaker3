@@ -59,13 +59,24 @@ function Palette:selectMultipleTiles(x, y)
    end
 end
 
+local function drawStencil(x,y,w,h)
+   return function()
+      love.graphics.rectangle("fill", x,y,w,h)
+   end
+end
+
 function Palette:draw()
    if self.disabled then return end
+   
+   love.graphics.stencil(drawStencil(self.x,self.y,self.width,self.height), "replace", 1)
+   love.graphics.setStencilTest("greater", 0)
+
    love.graphics.draw(grid, self.gridQuad, self.x, self.y)
    love.graphics.draw(self.tileSheet, self.x, self.y+self.tileSheetOffset)
 	love.graphics.setColor(0.9, 0.2, 0.2,0.9)
    love.graphics.rectangle("line", self.x+self.selectedTile["x"], self.y+self.tileSheetOffset+self.selectedTile["y"], self.selectionW, self.selectionH)
 
+   love.graphics.setStencilTest()
 	love.graphics.setColor(1,1,1)
 end
 
