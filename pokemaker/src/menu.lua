@@ -1,22 +1,26 @@
-local background = love.graphics.newImage("assets/menu/background.png")
+local background = love.graphics.newImage("pokemaker/assets/menu/background.png")
 
-Menu = {}
+PokemakerMenu = {}
 
-function Menu:new(o)
+function PokemakerMenu:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function Menu:init()
+function PokemakerMenu:init()
    self.projects = dirLookup("/home/will-roy/dev/pokemon3/pokemaker/projects/")
+
+   local mainX = 1300
+   local mainY = 1000
+   love.window.setMode(mainX, mainY, {resizable=true})
 end
 
-function Menu:update(dt)
+function PokemakerMenu:update(dt)
 end
 
-function Menu:draw()
+function PokemakerMenu:draw()
    love.graphics.draw(background, 0, 0)
    love.graphics.setColor(0,0,0)
    for i = 1, #self.projects do
@@ -28,20 +32,20 @@ function Menu:draw()
    love.graphics.setColor(1,1,1)
 end
 
-function Menu:mousepressed(x, y, button, istouch)
+function PokemakerMenu:mousepressed(x, y, button, istouch)
    openFile(self.projects[math.floor((y-300)/25)+1])
 end
 
-function Menu:mousereleased(x, y, button, istouch)
+function PokemakerMenu:mousereleased(x, y, button, istouch)
 end
 
-function Menu:keypressed(key, code)
+function PokemakerMenu:keypressed(key, code)
    if key == "escape" then
       love.event.push("quit")
    end
 end
 
-function Menu:wheelmoved(x, y)
+function PokemakerMenu:wheelmoved(x, y)
 end
  
 function dirLookup(dir)

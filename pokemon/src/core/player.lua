@@ -1,4 +1,4 @@
-local characters = love.graphics.newImage("assets/characters.png")
+local characters = love.graphics.newImage("pokemon/assets/characters.png")
 local character = {
 	["front"] = love.graphics.newQuad(206, 0, 28, 42, characters),
 	["frontWalk"] = love.graphics.newQuad(296, 0, 30, 42, characters),

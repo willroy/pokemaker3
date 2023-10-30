@@ -1,40 +1,41 @@
-local coreREQ = require("src/core/core")
+local coreREQ = require("pokemon/src/core/core")
 
 core = Core:new()
 
-Game = {}
+PokemonGame = {}
 
-function Game:new(o)
+function PokemonGame:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function Game:init()
+function PokemonGame:init()
+   print("yo")
    core:init(1, 0, 0, 1300, 1000)
 end
 
-function Game:update(dt)
+function PokemonGame:update(dt)
    core:update(dt)
 end
 
-function Game:draw()
+function PokemonGame:draw()
    core:draw(dt)
 end
 
-function Game:mousepressed(x, y, button, istouch)
+function PokemonGame:mousepressed(x, y, button, istouch)
    core:mousepressed(x, y, button, istouch)
 end
 
-function Game:mousereleased(x, y, button, istouch)
+function PokemonGame:mousereleased(x, y, button, istouch)
    core:mousereleased(x, y, button, istouch)
 end
 
-function Game:keypressed(key, code)
+function PokemonGame:keypressed(key, code)
    core:keypressed(key, code)
 end
 
-function Game:wheelmoved(x, y)
+function PokemonGame:wheelmoved(x, y)
    core:wheelmoved(x, y)
 end

@@ -1,7 +1,7 @@
-local mapREQ = require("src/core/map")
-local playerREQ = require("src/core/player")
+local mapREQ = require("pokemon/src/core/map")
+local playerREQ = require("pokemon/src/core/player")
 
-local wasdIMG = love.graphics.newImage("assets/wasd.png")
+local wasdIMG = love.graphics.newImage("pokemon/assets/wasd.png")
 local wasd = {
    ["w"]={["off"]=love.graphics.newQuad(0,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(0,32,32,32,wasdIMG)},
    ["a"]={["off"]=love.graphics.newQuad(32,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(32,32,32,32,wasdIMG)},

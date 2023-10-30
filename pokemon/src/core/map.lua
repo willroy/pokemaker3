@@ -1,20 +1,20 @@
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
-   ["interior_electronics"] = love.graphics.newImage("assets/tilesheets/interior-electronics.png"),
-   ["interior_flooring"] = love.graphics.newImage("assets/tilesheets/interior-flooring.png"),
-   ["interior_general"] = love.graphics.newImage("assets/tilesheets/interior-general.png"),
-   ["interior_misc"] = love.graphics.newImage("assets/tilesheets/interior-misc.png"),
-   ["interior_misc2"] = love.graphics.newImage("assets/tilesheets/interior-misc2.png"),
-   ["interior_stairs"] = love.graphics.newImage("assets/tilesheets/interior-stairs.png"),
-   ["interior_tables"] = love.graphics.newImage("assets/tilesheets/interior-tables.png"),
-   ["interior_walls"] = love.graphics.newImage("assets/tilesheets/interior-walls.png"),
-   ["outside_buildings"] = love.graphics.newImage("assets/tilesheets/outside-buildings.png"),
-   ["outside_ground"] = love.graphics.newImage("assets/tilesheets/outside-ground.png"),
-   ["outside_items"] = love.graphics.newImage("assets/tilesheets/outside-items.png"),
-   ["outside_misc"] = love.graphics.newImage("assets/tilesheets/outside-misc.png"),
-   ["outside_rocks"] = love.graphics.newImage("assets/tilesheets/outside-rocks.png"),
-   ["outside_vegetation"] = love.graphics.newImage("assets/tilesheets/outside-vegetation.png"),
-   ["text"] = love.graphics.newImage("assets/tilesheets/text.png")
+   ["interior_electronics"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-electronics.png"),
+   ["interior_flooring"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-flooring.png"),
+   ["interior_general"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-general.png"),
+   ["interior_misc"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-misc.png"),
+   ["interior_misc2"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-misc2.png"),
+   ["interior_stairs"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-stairs.png"),
+   ["interior_tables"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-tables.png"),
+   ["interior_walls"] = love.graphics.newImage("pokemon/assets/tilesheets/interior-walls.png"),
+   ["outside_buildings"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-buildings.png"),
+   ["outside_ground"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-ground.png"),
+   ["outside_items"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-items.png"),
+   ["outside_misc"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-misc.png"),
+   ["outside_rocks"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-rocks.png"),
+   ["outside_vegetation"] = love.graphics.newImage("pokemon/assets/tilesheets/outside-vegetation.png"),
+   ["text"] = love.graphics.newImage("pokemon/assets/tilesheets/text.png")
 }
 
 Map = {}
