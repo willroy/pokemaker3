@@ -20,9 +20,6 @@ local tileSheets = {
    ["text"] = love.graphics.newImage("pokemaker/assets/tilesheets/text.png")
 }
 
-palette = Palette:new()
-map = Map:new()
-
 PokemakerGame = {}
 
 function PokemakerGame:new(o)
@@ -43,32 +40,35 @@ function PokemakerGame:init(project, new)
    local mainX = 1300
    local mainY = 1000
 
-   palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
+   self.palette = Palette:new()
+   self.map = PokemakerMap:new()
 
-   map:init(1, 38, 38, mainX-40, mainY-32)
-   map:load(self.project)
+   self.palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
+
+   self.map:init(1, 38, 38, mainX-40, mainY-32)
+   self.map:load(self.project)
 
    self.selectedTileSheet = 0
 end
 
 function PokemakerGame:update(dt)
-   palette:update(dt)
-   map:update(dt)
+   self.palette:update(dt)
+   self.map:update(dt)
 end
 
 function PokemakerGame:draw()
-   map:draw(dt)
-   palette:draw(dt)
+   self.map:draw(dt)
+   self.palette:draw(dt)
 end
 
 function PokemakerGame:mousepressed(x, y, button, istouch)
-   palette:mousepressed(x, y, button, istouch)
-   map:mousepressed(x, y, button, istouch)
+   self.palette:mousepressed(x, y, button, istouch)
+   self.map:mousepressed(x, y, button, istouch)
 end
 
 function PokemakerGame:mousereleased(x, y, button, istouch)
-   palette:mousereleased(x, y, button, istouch)
-   map:mousereleased(x, y, button, istouch)
+   self.palette:mousereleased(x, y, button, istouch)
+   self.map:mousereleased(x, y, button, istouch)
 end
 
 function PokemakerGame:keypressed(key, code)
@@ -82,28 +82,28 @@ function PokemakerGame:keypressed(key, code)
 
    if key == "right" and self.selectedTileSheet < #tileSheetNames then
       self.selectedTileSheet = self.selectedTileSheet + 1
-      palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
+      self.palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
    end
    if key == "left" and self.selectedTileSheet > 1 then
       self.selectedTileSheet = self.selectedTileSheet - 1
-      palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
+      self.palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
    end
 
-   palette:keypressed(key, code)
-   map:keypressed(key, code)
+   self.palette:keypressed(key, code)
+   self.map:keypressed(key, code)
 end
 
 function PokemakerGame:wheelmoved(x, y)
-   palette:wheelmoved(x, y)
-   map:wheelmoved(x, y)
+   self.palette:wheelmoved(x, y)
+   self.map:wheelmoved(x, y)
 end
 
 function PokemakerGame:save()
-   map:save(self.project)
+   self.map:save(self.project)
 end
 
 function PokemakerGame:load()
-   map:load(self.project)
+   self.map:load(self.project)
 end
 
 function PokemakerGame:setFolder(project)

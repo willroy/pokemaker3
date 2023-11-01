@@ -14,7 +14,7 @@ function PokemakerMenu:init()
 
    local mainX = 1300
    local mainY = 1000
-   love.window.setMode(mainX, mainY, {resizable=true})
+   -- love.window.setMode(mainX, mainY, {resizable=true})
 end
 
 function PokemakerMenu:update(dt)

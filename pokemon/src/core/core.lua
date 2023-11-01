@@ -9,9 +9,6 @@ local wasd = {
    ["d"]={["off"]=love.graphics.newQuad(96,0,32,32,wasdIMG),["on"]=love.graphics.newQuad(96,32,32,32,wasdIMG)}
 }
 
-map = Map:new()
-player = Player:new()
-
 Core = {}
 
 function Core:new(o)
@@ -22,22 +19,23 @@ function Core:new(o)
 end
 
 function Core:init()
-   map:init(1, -32, -32, 1300, 1000)
-   map:load()
+   self.map = Map:new()
+   self.player = Player:new()
 
-   player:init(612, 456)
+   self.map:init(1, -32, -32, 1300, 1000)
+   self.map:load()
+
+   self.player:init(612, 456)
 
    self.move = {["busy"]=false, ["dir"]={0,0}, ["tick"]=0, ["startTick"]=0}
-
    self.collisions = self:loadCollision()
-
    self.debug = false
 end
 
 function Core:update(dt)
    self:movement()
-   map:update(dt)
-   player:update(dt)
+   self.map:update(dt)
+   self.player:update(dt)
 end
 
 function Core:movement()
@@ -57,10 +55,10 @@ function Core:movement()
       local speed = 3
       if self.move["tick"] == 30 then
          self.move["tick"] = 32
-         map:move({self.move["dir"][1]*2,self.move["dir"][2]*2})
+         self.map:move({self.move["dir"][1]*2,self.move["dir"][2]*2})
       else
          self.move["tick"] = self.move["tick"] + (1*speed)
-         map:move({self.move["dir"][1]*speed,self.move["dir"][2]*speed})
+         self.map:move({self.move["dir"][1]*speed,self.move["dir"][2]*speed})
       end
       if self.move["tick"] == 32 then
          self.move["busy"] = false
@@ -76,8 +74,8 @@ function Core:hitSomething()
    elseif love.keyboard.isDown("a") then dir = {-1,0}
    elseif love.keyboard.isDown("d") then dir = {1,0} end
 
-   local mapPos = map:getPos()
-   local playerPos = player:getPos()
+   local mapPos = self.map:getPos()
+   local playerPos = self.player:getPos()
 
    local relativePos = {["x"]=math.floor(((playerPos["x"]-mapPos["x"]))/32)*32+5,["y"]=math.floor(((playerPos["y"]-mapPos["y"]))/32)*32+18}
 
@@ -92,17 +90,17 @@ function Core:hitSomething()
 end
 
 function Core:draw()
-   map:draw(dt)
-   player:draw(dt)
-   map:drawZIndexes()
+   self.map:draw(dt)
+   self.player:draw(dt)
+   self.map:drawZIndexes()
    love.graphics.setColor(1,1,1)
 
    if self.debug then self:drawDebug() end
 end
 
 function Core:drawDebug()
-   local mapPos = map:getPos()
-   local playerPos = player:getPos()
+   local mapPos = self.map:getPos()
+   local playerPos = self.player:getPos()
 
    local relativePos = {["x"]=math.floor(((playerPos["x"]-mapPos["x"]))/32)*32+5,["y"]=math.floor(((playerPos["y"]-mapPos["y"]))/32)*32+18}
 
@@ -128,24 +126,24 @@ function Core:drawDebug()
 end
 
 function Core:mousepressed(x, y, button, istouch)
-   map:mousepressed(x, y, button, istouch)
-   player:mousepressed(x, y, button, istouch)
+   self.map:mousepressed(x, y, button, istouch)
+   self.player:mousepressed(x, y, button, istouch)
 end
 
 function Core:mousereleased(x, y, button, istouch)
-   map:mousereleased(x, y, button, istouch)
-   player:mousereleased(x, y, button, istouch)
+   self.map:mousereleased(x, y, button, istouch)
+   self.player:mousereleased(x, y, button, istouch)
 end
 
 function Core:keypressed(key, code)
    if key == "'" then self.debug = not self.debug end
-   map:keypressed(key, code)
-   player:keypressed(key, code)
+   self.map:keypressed(key, code)
+   self.player:keypressed(key, code)
 end
 
 function Core:wheelmoved(x, y)
-   map:wheelmoved(x, y)
-   player:wheelmoved(x, y)
+   self.map:wheelmoved(x, y)
+   self.player:wheelmoved(x, y)
 end
 
 function Core:loadCollision()

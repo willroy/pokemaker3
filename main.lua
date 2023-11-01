@@ -1,12 +1,7 @@
 local pokemakerGameREQ = require("pokemaker/src/game")
 local pokemakerMenuREQ = require("pokemaker/src/menu")
-local pokemakerGame = PokemakerGame:new()
-local pokemakerMenu = PokemakerMenu:new()
-
 local pokemonGameREQ = require("pokemon/src/game")
 local pokemonMenuREQ = require("pokemon/src/menu")
-local pokemonGame = PokemonGame:new()
-local pokemonMenu = PokemonMenu:new()
 
 local startupREQ = require("startup")
 local startup = Startup:new()
@@ -58,20 +53,19 @@ function love.conf(t)
 end
 
 function setCurrent(text)
-	if text == "startup" then current = startup end
-	if text == "pmak-game" then current = pokemakerGame end
-	if text == "pmak-menu" then current = pokemakerMenu end
-	if text == "pmon-game" then current = pokemonGame end
-	if text == "pmon-menu" then current = pokemonMenu end
+	if text == "startup" then current = Startup:new() end
+	if text == "pmak-game" then current = PokemakerGame:new() end
+	if text == "pmak-menu" then current = PokemakerMenu:new() end
+	if text == "pmon-game" then current = PokemonGame:new() end
+	if text == "pmon-menu" then current = PokemonMenu:new() end
 	current:init()
 end
 
 function openFile(project, inPokemon)
 	if inPokemon then
-		current = pokemonGame
+		current = PokemonGame:new()
 	else
-		current = pokemakerGame
+		current = PokemakerGame:new()
 	end
-
 	current:init(project)
 end

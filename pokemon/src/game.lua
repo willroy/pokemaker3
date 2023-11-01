@@ -1,6 +1,6 @@
 local coreREQ = require("pokemon/src/core/core")
 
-core = Core:new()
+
 
 PokemonGame = {}
 
@@ -12,30 +12,30 @@ function PokemonGame:new(o)
 end
 
 function PokemonGame:init()
-   print("yo")
-   core:init(1, 0, 0, 1300, 1000)
+   self.core = Core:new()
+   self.core:init(1, 0, 0, 1300, 1000)
 end
 
 function PokemonGame:update(dt)
-   core:update(dt)
+   self.core:update(dt)
 end
 
 function PokemonGame:draw()
-   core:draw(dt)
+   self.core:draw(dt)
 end
 
 function PokemonGame:mousepressed(x, y, button, istouch)
-   core:mousepressed(x, y, button, istouch)
+   self.core:mousepressed(x, y, button, istouch)
 end
 
 function PokemonGame:mousereleased(x, y, button, istouch)
-   core:mousereleased(x, y, button, istouch)
+   self.core:mousereleased(x, y, button, istouch)
 end
 
 function PokemonGame:keypressed(key, code)
-   core:keypressed(key, code)
+   self.core:keypressed(key, code)
 end
 
 function PokemonGame:wheelmoved(x, y)
-   core:wheelmoved(x, y)
+   self.core:wheelmoved(x, y)
 end
