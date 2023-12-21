@@ -1,29 +1,29 @@
-PokemonMenu = {}
+Menu = {}
 
-function PokemonMenu:new(o)
+function Menu:new(o)
 	local o = o or {}
 	setmetatable(o, self)
 	self.__index = self
 	return o
 end
 
-function PokemonMenu:init()
+function Menu:init()
 end
 
-function PokemonMenu:update(dt)
+function Menu:update(dt)
 end
 
-function PokemonMenu:draw()
+function Menu:draw()
 end
 
-function PokemonMenu:mousepressed(x, y, button, istouch)
+function Menu:mousepressed(x, y, button, istouch)
 end
 
-function PokemonMenu:mousereleased(x, y, button, istouch)
+function Menu:mousereleased(x, y, button, istouch)
 end
 
-function PokemonMenu:keypressed(key, code)
+function Menu:keypressed(key, code)
 end
 
-function PokemonMenu:wheelmoved(x, y)
+function Menu:wheelmoved(x, y)
 end

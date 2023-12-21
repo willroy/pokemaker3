@@ -1,7 +1,7 @@
 require "lfs"
 
-local collisionREQ = require("pokemaker/src/core/collision")
-local zindexREQ = require("pokemaker/src/core/z-index")
+local collisionREQ = require("pokemaker/src/core/collisionM")
+local zindexREQ = require("pokemaker/src/core/z-indexM")
 
 local grid = love.graphics.newImage("pokemaker/assets/game/grid.png")
 local pencil = love.graphics.newImage("pokemaker/assets/game/pencil.png")
@@ -37,16 +37,16 @@ local tileSheets = {
    ["text"] = love.graphics.newImage("pokemaker/assets/tilesheets/text.png")
 }
 
-PokemakerMap = {}
+MapM = {}
 
-function PokemakerMap:new(o)
+function MapM:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function PokemakerMap:init(id, x, y, width, height)
+function MapM:init(id, x, y, width, height)
    self.id = id or 0
    self.x = x or 0
    self.y = y or 0
@@ -69,15 +69,16 @@ function PokemakerMap:init(id, x, y, width, height)
    self.lastDeleted = {}
 
    self.mode = "tiles"
-   self.collision = Collision:new()
+   self.collision = CollisionM:new()
    self.collisionINIT = false
-   self.zindex = Zindex:new()
+   self.zindex = ZindexM:new()
    self.zindexINIT = false
 
    self.start = false
 end
 
-function PokemakerMap:update(dt)
+function MapM:update(dt)
+   local palette = current:getPalette()
    if self.mode == "tiles" then
       self:move()
       self:removeTile()
@@ -101,7 +102,7 @@ function PokemakerMap:update(dt)
    end
 end
 
-function PokemakerMap:mousepressed(x, y, button, istouch)
+function MapM:mousepressed(x, y, button, istouch)
    if self.mode == "collision" then
       self.collision:mousepressed(x, y, button, istouch)
    elseif self.mode == "zindex" then
@@ -109,7 +110,7 @@ function PokemakerMap:mousepressed(x, y, button, istouch)
    end
 end
 
-function PokemakerMap:mousereleased(x, y, button, istouch)
+function MapM:mousereleased(x, y, button, istouch)
    self.start = true
    if self.mode == "collision" then
       self.collision:mousereleased(x, y, button, istouch)
@@ -118,7 +119,7 @@ function PokemakerMap:mousereleased(x, y, button, istouch)
    end
 end
 
-function PokemakerMap:keypressed(key, code)
+function MapM:keypressed(key, code)
    if self.mode == "tiles" then
       if key == "b" then
          if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
@@ -144,19 +145,19 @@ function PokemakerMap:keypressed(key, code)
    end
 end
 
-function PokemakerMap:wheelmoved(x, y)
+function MapM:wheelmoved(x, y)
 end
 
 -- UPDATE METHODS --
 
-function PokemakerMap:move()
+function MapM:move()
    if love.keyboard.isDown("w") then self.moveY = self.moveY + 16
    elseif love.keyboard.isDown("a") then self.moveX = self.moveX + 16
    elseif love.keyboard.isDown("s") then self.moveY = self.moveY - 16
    elseif love.keyboard.isDown("d") then self.moveX = self.moveX - 16 end
 end
 
-function PokemakerMap:removeTile()
+function MapM:removeTile()
    local x, y = love.mouse.getPosition()
    local pressed = love.mouse.isDown(2)
 
@@ -191,7 +192,8 @@ function PokemakerMap:removeTile()
    self.lastDeleted = {relativeX, relativeY}
 end
 
-function PokemakerMap:placeTile()
+function MapM:placeTile()
+   local palette = current:getPalette()
    local x, y = love.mouse.getPosition()
    local pressed = love.mouse.isDown(1)
 
@@ -246,7 +248,7 @@ end
 
 -- DRAW METHODS --
 
-function PokemakerMap:draw()
+function MapM:draw()
    
    self:drawMap()
 
@@ -263,7 +265,7 @@ function PokemakerMap:draw()
    if self.helpMenu then self:drawHelpMenu() end   
 end
 
-function PokemakerMap:drawMap()
+function MapM:drawMap()
    love.graphics.setColor(1,1,1)
    love.graphics.draw(grid, self.gridQuad, self.x, self.y)
    for k1, layer in pairs(self.layers) do
@@ -304,7 +306,7 @@ function PokemakerMap:drawMap()
    love.graphics.setColor(1,1,1)
 end
 
-function PokemakerMap:drawMenuBackground()
+function MapM:drawMenuBackground()
    love.graphics.setColor(0.9,0.9,0.9)
    love.graphics.rectangle("fill", 0, 0, 40, love.graphics.getHeight())
    love.graphics.setColor(0.8,0.8,0.8)
@@ -312,16 +314,16 @@ function PokemakerMap:drawMenuBackground()
    love.graphics.setColor(1,1,1)
 end
 
-function PokemakerMap:drawToolBar()
+function MapM:drawToolBar()
    if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 5, 100) end
    if self.brush == brushes["brush"] then love.graphics.draw(brush, 5, 100) end
    if self.brush == brushes["brushXL"] then love.graphics.draw(brushXL, 5, 100) end
 end
 
-function PokemakerMap:drawMenuBar()
+function MapM:drawMenuBar()
 end
 
-function PokemakerMap:drawHelpMenu()
+function MapM:drawHelpMenu()
    love.graphics.setColor(1,1,1)
    love.graphics.rectangle("fill", 500, 200, 300, 500)
    love.graphics.setColor(0,0,0)
@@ -336,7 +338,7 @@ end
 
 -- SAVE LOAD --
 
-function PokemakerMap:save(project)
+function MapM:save(project)
    if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
       lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
    end
@@ -358,7 +360,7 @@ function PokemakerMap:save(project)
    end
 end
 
-function PokemakerMap:load(project)
+function MapM:load(project)
    self.project = project
    local newLayers = {}
 
@@ -390,7 +392,7 @@ function PokemakerMap:load(project)
    self.layers = newLayers
 end
 
-function PokemakerMap:FolderExists(folder)
+function MapM:FolderExists(folder)
   if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
     return true
   else
@@ -398,10 +400,10 @@ function PokemakerMap:FolderExists(folder)
   end
 end
 
-function PokemakerMap:setLayer(layer)
+function MapM:setLayer(layer)
    self.layer = layer
 end
 
-function PokemakerMap:setOnionSkin(onion)
+function MapM:setOnionSkin(onion)
    self.onionSkin = onion
 end

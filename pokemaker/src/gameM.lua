@@ -1,5 +1,5 @@
-local mapREQ = require("pokemaker/src/core/map")
-local paletteREQ = require("pokemaker/src/core/palette")
+local mapREQ = require("pokemaker/src/core/mapM")
+local paletteREQ = require("pokemaker/src/core/paletteM")
 
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
@@ -20,16 +20,16 @@ local tileSheets = {
    ["text"] = love.graphics.newImage("pokemaker/assets/tilesheets/text.png")
 }
 
-PokemakerGame = {}
+GameM = {}
 
-function PokemakerGame:new(o)
+function GameM:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function PokemakerGame:init(project, new)
+function GameM:init(project, new)
    self.project = project or "project1"
 
    if new then
@@ -40,8 +40,8 @@ function PokemakerGame:init(project, new)
    local mainX = 1300
    local mainY = 1000
 
-   self.palette = Palette:new()
-   self.map = PokemakerMap:new()
+   self.palette = PaletteM:new()
+   self.map = MapM:new()
 
    self.palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
@@ -51,30 +51,30 @@ function PokemakerGame:init(project, new)
    self.selectedTileSheet = 0
 end
 
-function PokemakerGame:update(dt)
+function GameM:update(dt)
    self.palette:update(dt)
    self.map:update(dt)
 end
 
-function PokemakerGame:draw()
+function GameM:draw()
    self.map:draw(dt)
    self.palette:draw(dt)
 end
 
-function PokemakerGame:mousepressed(x, y, button, istouch)
+function GameM:mousepressed(x, y, button, istouch)
    self.palette:mousepressed(x, y, button, istouch)
    self.map:mousepressed(x, y, button, istouch)
 end
 
-function PokemakerGame:mousereleased(x, y, button, istouch)
+function GameM:mousereleased(x, y, button, istouch)
    self.palette:mousereleased(x, y, button, istouch)
    self.map:mousereleased(x, y, button, istouch)
 end
 
-function PokemakerGame:keypressed(key, code)
+function GameM:keypressed(key, code)
    if key == "escape" then
       self:save()
-      setCurrent("menu")
+      setCurrent("pmak-menu")
    end
 
    -- if key == "s" then self:save() end
@@ -93,19 +93,23 @@ function PokemakerGame:keypressed(key, code)
    self.map:keypressed(key, code)
 end
 
-function PokemakerGame:wheelmoved(x, y)
+function GameM:wheelmoved(x, y)
    self.palette:wheelmoved(x, y)
    self.map:wheelmoved(x, y)
 end
 
-function PokemakerGame:save()
+function GameM:save()
    self.map:save(self.project)
 end
 
-function PokemakerGame:load()
+function GameM:load()
    self.map:load(self.project)
 end
 
-function PokemakerGame:setFolder(project)
+function GameM:setFolder(project)
    self.project = project
+end
+
+function GameM:getPalette()
+   return self.palette
 end

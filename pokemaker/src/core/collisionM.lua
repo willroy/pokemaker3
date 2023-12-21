@@ -5,23 +5,23 @@ local brushes = {
    ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
 }
 
-Zindex = {}
+CollisionM = {}
 
-function Zindex:new(o)
+function CollisionM:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function Zindex:init(id, x, y, width, height)
+function CollisionM:init(id, x, y, width, height)
    self.id = id or 0
    self.x = x or 0
    self.y = y or 0
    self.width = width or 0
    self.height = height or 0
    self.backColor = {1,1,1}
-   self.zindexes = {}
+   self.cols = {}
 
    self.lastUpdated = {}
    self.lastDeleted = {}
@@ -29,18 +29,14 @@ function Zindex:init(id, x, y, width, height)
    self.brush = brushes["pencil"]
 
    self.project = ""
-
-   self.layer = 1
-
-   map:setOnionSkin(true)
 end
 
-function Zindex:update(dt)
+function CollisionM:update(dt)
    self:removeTile()
    self:placeTile()
 end
 
-function Zindex:removeTile()
+function CollisionM:removeTile()
    local x, y = love.mouse.getPosition()
    local pressed = love.mouse.isDown(2)
    
@@ -55,7 +51,7 @@ function Zindex:removeTile()
 
    local newCols = {}
 
-   for k, col in pairs(self.zindexes) do
+   for k, col in pairs(self.cols) do
       local found = false
       for i = 1, #self.brush do
          local brushX = relativeX+(self.brush[i][1]*32)
@@ -69,11 +65,11 @@ function Zindex:removeTile()
       end
    end
 
-   self.zindexes = newCols
+   self.cols = newCols
    self.lastDeleted = {relativeX, relativeY}
 end
 
-function Zindex:placeTile()
+function CollisionM:placeTile()
    local x, y = love.mouse.getPosition()
    local pressed = love.mouse.isDown(1)
 
@@ -88,86 +84,74 @@ function Zindex:placeTile()
 
    for i = 1, #self.brush do
       local newCol = {
-         ["layer"]=self.layer, 
          ["x"]=relativeX+(self.brush[i][1]*32), 
          ["y"]=relativeY+(self.brush[i][2]*32)
       }
       
       local replaced = false
-      for k, tile in pairs(self.zindexes) do
+      for k, tile in pairs(self.cols) do
          local x = relativeX+(self.brush[i][1]*32)
          local y = relativeY+(self.brush[i][2]*32)
          local tileX = tonumber(tile["x"])
          local tileY = tonumber(tile["y"])
          if x == tileX and y == tileY then
-            self.zindexes[k] = newCol
+            self.cols[k] = newCol
             replaced = true
          end
       end
 
-      if not replaced then self.zindexes[#self.zindexes+1] = newCol end
+      if not replaced then self.cols[#self.cols+1] = newCol end
    end
 
    self.lastUpdated = {relativeX, relativeY}
 end
 
-function Zindex:draw()
+function CollisionM:draw()
    love.graphics.setColor(1,1,1, 0.5)
-   for k, tile in pairs(self.zindexes) do
+   for k, tile in pairs(self.cols) do
       local x = tile["x"]
       local y = tile["y"]
       love.graphics.setColor(1,0.8,0.8, 0.7)
       love.graphics.rectangle("fill", x, y, 32, 32)
    end
-   love.graphics.setColor(0,0,0)
-   love.graphics.print("Layer: "..self.layer, 1200,15)
    love.graphics.setColor(1,1,1)
 end
 
-function Zindex:mousepressed(x, y, button, istouch)
+function CollisionM:mousepressed(x, y, button, istouch)
 end
 
-function Zindex:mousereleased(x, y, button, istouch)
+function CollisionM:mousereleased(x, y, button, istouch)
 end
 
-function Zindex:keypressed(key, code)
+function CollisionM:keypressed(key, code)
    if key == "escape" then
       self:save(self.project)
-      setCurrent("menu")
-   end
-
-   if key == "[" and self.layer > 1 then
-      self.layer = self.layer - 1
-      map:setLayer(self.layer)
-   elseif key == "]" then
-      self.layer = self.layer + 1
-      map:setLayer(self.layer)
+      setCurrent("pmak-menu")
    end
 end
 
-function Zindex:wheelmoved(x, y)
+function CollisionM:wheelmoved(x, y)
 end
 
-function Zindex:save(project)
+function CollisionM:save(project)
    if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
       lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
    end
 
-   local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/zindexes.snorlax", "w")
+   local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/cols.snorlax", "w")
 
-   for k, tile in pairs(self.zindexes) do
-      local layer = tile["layer"]
+   for k, tile in pairs(self.cols) do
       local x = tile["x"]
       local y = tile["y"]
-      file:write(layer..","..x..","..y.."\n")
+      file:write(x..","..y.."\n")
    end
 
   file:close()
 end
 
-function Zindex:load(project)
+function CollisionM:load(project)
    self.project = project
-   local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/zindexes.snorlax"
+   local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/cols.snorlax"
    local f = io.open(file, "r")
    if f then f:close() end
    if f == nil then return false end
@@ -180,16 +164,15 @@ function Zindex:load(project)
          table.insert(lineSplit, str)
       end
       newTiles[#newTiles+1] = {
-         ["layer"]=lineSplit[1],
-         ["x"]=lineSplit[2],
-         ["y"]=lineSplit[3]
+         ["x"]=lineSplit[1],
+         ["y"]=lineSplit[2]
       }
    end
 
-   self.zindexes = newTiles
+   self.cols = newTiles
 end
 
-function Zindex:FolderExists(folder)
+function CollisionM:FolderExists(folder)
   if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
     return true
   else

@@ -1,11 +1,11 @@
-local pokemakerGameREQ = require("pokemaker/src/game")
-local pokemakerMenuREQ = require("pokemaker/src/menu")
+local pokemakerGameREQ = require("pokemaker/src/gameM")
+local pokemakerMenuREQ = require("pokemaker/src/menuM")
 local pokemonGameREQ = require("pokemon/src/game")
 local pokemonMenuREQ = require("pokemon/src/menu")
 
 local startupREQ = require("startup")
 local startup = Startup:new()
-local current = startup
+current = startup
 
 function love.load()
 	local icon = love.image.newImageData("pokemaker/assets/icon.png");
@@ -54,18 +54,18 @@ end
 
 function setCurrent(text)
 	if text == "startup" then current = Startup:new() end
-	if text == "pmak-game" then current = PokemakerGame:new() end
-	if text == "pmak-menu" then current = PokemakerMenu:new() end
-	if text == "pmon-game" then current = PokemonGame:new() end
-	if text == "pmon-menu" then current = PokemonMenu:new() end
+	if text == "pmak-game" then current = GameM:new() end
+	if text == "pmak-menu" then current = MenuM:new() end
+	if text == "pmon-game" then current = Game:new() end
+	if text == "pmon-menu" then current = Menu:new() end
 	current:init()
 end
 
 function openFile(project, inPokemon)
 	if inPokemon then
-		current = PokemonGame:new()
+		current = Game:new()
 	else
-		current = PokemakerGame:new()
+		current = GameM:new()
 	end
 	current:init(project)
 end

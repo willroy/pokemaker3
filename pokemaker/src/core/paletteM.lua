@@ -1,15 +1,15 @@
 local grid = love.graphics.newImage("pokemaker/assets/game/grid.png")
 
-Palette = {}
+PaletteM = {}
 
-function Palette:new(o)
+function PaletteM:new(o)
    local o = o or {}
    setmetatable(o, self)
    self.__index = self
    return o
 end
 
-function Palette:init(id, x, y, width, height, tileSheet, tileSheetText)
+function PaletteM:init(id, x, y, width, height, tileSheet, tileSheetText)
    self.id = id or 0
    self.x = x or 0
    self.y = y or 0
@@ -32,13 +32,13 @@ function Palette:init(id, x, y, width, height, tileSheet, tileSheetText)
    self.disabled = false
 end
 
-function Palette:update(dt)
+function PaletteM:update(dt)
    if self.disabled then return end
    local x, y = love.mouse.getPosition()
    self:selectMultipleTiles(x, y, button)
 end
 
-function Palette:selectMultipleTiles(x, y)
+function PaletteM:selectMultipleTiles(x, y)
    if not love.mouse.isDown(2) then return false end
    if x < self.x or x > (self.x+self.width) then return false end
    if y < self.y or y > (self.y+self.height) then return false end
@@ -65,7 +65,7 @@ local function drawStencil(x,y,w,h)
    end
 end
 
-function Palette:draw()
+function PaletteM:draw()
    if self.disabled then return end
    
    love.graphics.stencil(drawStencil(self.x,self.y,self.width,self.height), "replace", 1)
@@ -80,12 +80,12 @@ function Palette:draw()
 	love.graphics.setColor(1,1,1)
 end
 
-function Palette:mousepressed(x, y, button, istouch)
+function PaletteM:mousepressed(x, y, button, istouch)
    if self.disabled then return end
    self:selectTile(x, y, button)
 end
 
-function Palette:selectTile(x, y, button)
+function PaletteM:selectTile(x, y, button)
    if button ~= 1 then return false end
    if x < self.x or x > (self.x+self.width) then return false end
    if y < self.y or y > (self.y+self.height) then return false end
@@ -98,7 +98,7 @@ function Palette:selectTile(x, y, button)
    self.selectedTile["h"] = self.selectionH
 end
 
-function Palette:mousereleased(x, y, button, istouch)
+function PaletteM:mousereleased(x, y, button, istouch)
    if self.disabled then return end
    if #self.startSquare ~= 0 then
       self.selectedTile["x"] = self.startSquare[1]
@@ -109,11 +109,11 @@ function Palette:mousereleased(x, y, button, istouch)
    end
 end
 
-function Palette:keypressed(key, code)
+function PaletteM:keypressed(key, code)
    if self.disabled then return end
 end
 
-function Palette:wheelmoved(x, y)
+function PaletteM:wheelmoved(x, y)
    if self.disabled then return end
    local mouseX, mouseY = love.mouse.getPosition()
    local lctrlDown = love.keyboard.isDown("lctrl")
@@ -127,7 +127,7 @@ function Palette:wheelmoved(x, y)
    if y > 0 then self.tileSheetOffset = self.tileSheetOffset + (y*offset) end
 end
 
-function Palette:getSelected()
+function PaletteM:getSelected()
    local selectedTiles = {}
    if self.selectedTile["w"] > 32 or self.selectedTile["h"] > 32 then
       local x = self.selectedTile["x"]
@@ -144,13 +144,13 @@ function Palette:getSelected()
    return {self.tileSheetText, selectedTiles}
 end
 
-function Palette:setTileSheet(tilesheet, tilesheetText)
+function PaletteM:setTileSheet(tilesheet, tilesheetText)
    self.tileSheet = tilesheet
    self.tileSheetText = tilesheetText
    self.tileSheetOffset = 32
 end
 
-function Palette:getCoordsInQuad(x, y, w, h)
+function PaletteM:getCoordsInQuad(x, y, w, h)
    local countW = w/32
    local countH = h/32
    local tiles = {}
@@ -164,6 +164,6 @@ function Palette:getCoordsInQuad(x, y, w, h)
    return tiles
 end
 
-function Palette:disable()
+function PaletteM:disable()
    self.disabled = true
 end
