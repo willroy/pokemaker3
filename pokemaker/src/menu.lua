@@ -11,9 +11,6 @@ end
 
 function MenuM:init()
   self.projects = dirLookup("/home/will-roy/dev/pokemon3/pokemaker/projects/")
-
-  local mainX = 1300
-  local mainY = 1000
 end
 
 function MenuM:update(dt)
@@ -32,7 +29,7 @@ function MenuM:draw()
 end
 
 function MenuM:mousepressed(x, y, button, istouch)
-  openFile(self.projects[math.floor((y-300)/25)+1])
+  openProject(self.projects[math.floor((y-300)/25)+1])
 end
 
 function MenuM:mousereleased(x, y, button, istouch)

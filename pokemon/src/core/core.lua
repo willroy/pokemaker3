@@ -92,7 +92,7 @@ end
 function Core:draw()
   self.map:draw(dt)
   self.player:draw(dt)
-  self.map:drawZIndexes()
+  self.map:drawFloatTiles()
   love.graphics.setColor(1,1,1)
 
   if self.debug then self:drawDebug() end

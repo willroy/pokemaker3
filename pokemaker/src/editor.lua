@@ -29,11 +29,12 @@ function EditorM:new(o)
   return o
 end
 
-function EditorM:init(project, new)
+function EditorM:init(project, mapFile, new)
   self.project = project or "project1"
+  self.mapFile = mapFile or "mapFile1"
 
   if new then
-    if self.project == "" then self.project = "New-Project" end
+    if self.mapFile == "" then self.mapFile = "New-Map" end
     self:save()
   end
 
@@ -46,7 +47,7 @@ function EditorM:init(project, new)
   self.palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
   self.map:init(1, 38, 38, mainX-40, mainY-32)
-  self.map:load(self.project)
+  self.map:load(self.project, self.mapFile)
 
   self.selectedTileSheet = 0
 end
@@ -75,6 +76,7 @@ function EditorM:keypressed(key, code)
   if key == "escape" then
     self:save()
     setCurrent("pmak-menu")
+    openProject(self.project)
   end
 
   -- if key == "s" then self:save() end
@@ -99,15 +101,16 @@ function EditorM:wheelmoved(x, y)
 end
 
 function EditorM:save()
-  self.map:save(self.project)
+  self.map:save(self.project, self.mapFile)
 end
 
 function EditorM:load()
-  self.map:load(self.project)
+  self.map:load(self.project, self.mapFile)
 end
 
-function EditorM:setFolder(project)
+function EditorM:setFolder(project, mapFile)
   self.project = project
+  self.mapFile = mapFile
 end
 
 function EditorM:getPalette()

@@ -56,7 +56,7 @@ function MapM:init(id, x, y, width, height)
   self.height = height or 0
   self.backColor = {1,1,1}
 
-  self.project = ""
+  self.mapFile = ""
 
   self.gridQuad = love.graphics.newQuad(0, 0, self.width, self.height, grid)
   self.brush = brushes["pencil"]
@@ -86,7 +86,7 @@ function MapM:update(dt)
   elseif self.mode == "collision" then
     if self.collisionINIT == false then 
       self.collision:init(self.id, self.x, self.y, self.width, self.height)
-      self.collision:load(self.project)
+      self.collision:load(self.mapFile)
       palette:disable()
       self.collisionINIT = true
     end
@@ -94,7 +94,7 @@ function MapM:update(dt)
   elseif self.mode == "floatTiles" then
     if self.floatTilesINIT == false then 
       self.floatTiles:init(self.id, self.x, self.y, self.width, self.height)
-      self.floatTiles:load(self.project)
+      self.floatTiles:load(self.mapFile)
       palette:disable()
       self.floatTilesINIT = true
     end
@@ -337,14 +337,14 @@ end
 
 -- SAVE LOAD --
 
-function MapM:save(project)
-  if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
-    lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
+function MapM:save(project, mapFile)
+  if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
   for k1, layer in pairs(self.layers) do
     if #layer > 0 then
-      local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/tiles-l"..k1..".snorlax", "w")
+      local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..k1..".snorlax", "w")
       for k2, tile in pairs(layer) do
         local id = tile["id"]
         local tilesheet = tile["tilesheet"]
@@ -359,12 +359,14 @@ function MapM:save(project)
   end
 end
 
-function MapM:load(project)
+function MapM:load(project, mapFile)
   self.project = project
+  self.mapFile = mapFile
   local newLayers = {}
 
   for i = 1, 10 do
-    local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/tiles-l"..i..".snorlax"
+    local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..i..".snorlax"
+    print(file)
     local f = io.open(file, "r")
     if f then f:close() end
     if f ~= nil then

@@ -1,9 +1,10 @@
 local pokemakerGameREQ = require("pokemaker/src/editor")
+local pokemakerMenuREQ = require("pokemaker/src/gameMenu")
 local pokemakerMenuREQ = require("pokemaker/src/menu")
 local pokemonGameREQ = require("pokemon/src/game")
 local pokemonMenuREQ = require("pokemon/src/menu")
 
-local startupREQ = require("startup")
+local startupREQ = require("startup/startup")
 local startup = Startup:new()
 current = startup
 
@@ -61,20 +62,17 @@ function setCurrent(text)
 	current:init()
 end
 
-function openGame(project, inPokemon)
-	if inPokemon then
-		current = Game:new()
-	else
-		current = gameMenuM:new()
-	end
+function openProject(project)
+	current = GameMenuM:new()
 	current:init(project)
 end
 
-function openFile(project, inPokemon)
-	if inPokemon then
-		current = Game:new()
-	else
-		current = EditorM:new()
-	end
+function openMap(project, mapFile)
+	current = EditorM:new()
+	current:init(project, mapFile)
+end
+
+function openGame(project)
+	current = Game:new()
 	current:init(project)
 end
