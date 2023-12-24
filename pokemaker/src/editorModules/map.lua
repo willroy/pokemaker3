@@ -1,16 +1,16 @@
 require "lfs"
 
-local collisionREQ = require("pokemaker/src/core/collisionM")
-local zindexREQ = require("pokemaker/src/core/z-indexM")
+local collisionREQ = require("pokemaker/src/editorModules/collision")
+local floatTilesREQ = require("pokemaker/src/editorModules/floatTiles")
 
-local grid = love.graphics.newImage("pokemaker/assets/game/grid.png")
-local pencil = love.graphics.newImage("pokemaker/assets/game/pencil.png")
-local brush = love.graphics.newImage("pokemaker/assets/game/pen.png")
-local brushXL = love.graphics.newImage("pokemaker/assets/game/penXL.png")
-local onionON = love.graphics.newImage("pokemaker/assets/game/onionON.png")
-local onionOFF = love.graphics.newImage("pokemaker/assets/game/onionOFF.png")
+local grid = love.graphics.newImage("pokemaker/assets/editor/grid.png")
+local pencil = love.graphics.newImage("pokemaker/assets/editor/pencil.png")
+local brush = love.graphics.newImage("pokemaker/assets/editor/pen.png")
+local brushXL = love.graphics.newImage("pokemaker/assets/editor/penXL.png")
+local onionON = love.graphics.newImage("pokemaker/assets/editor/onionON.png")
+local onionOFF = love.graphics.newImage("pokemaker/assets/editor/onionOFF.png")
 
-local background = love.graphics.newImage("pokemaker/assets/game/background.png")
+local background = love.graphics.newImage("pokemaker/assets/editor/background.png")
 
 local brushes = {
   ["pencil"]={{0,0}},
@@ -71,8 +71,8 @@ function MapM:init(id, x, y, width, height)
   self.mode = "tiles"
   self.collision = CollisionM:new()
   self.collisionINIT = false
-  self.zindex = ZindexM:new()
-  self.zindexINIT = false
+  self.floatTiles = FloatTilesM:new()
+  self.floatTilesINIT = false
 
   self.start = false
 end
@@ -91,22 +91,22 @@ function MapM:update(dt)
       self.collisionINIT = true
     end
     self.collision:update(dt)
-  elseif self.mode == "zindex" then
-    if self.zindexINIT == false then 
-      self.zindex:init(self.id, self.x, self.y, self.width, self.height)
-      self.zindex:load(self.project)
+  elseif self.mode == "floatTiles" then
+    if self.floatTilesINIT == false then 
+      self.floatTiles:init(self.id, self.x, self.y, self.width, self.height)
+      self.floatTiles:load(self.project)
       palette:disable()
-      self.zindexINIT = true
+      self.floatTilesINIT = true
     end
-    self.zindex:update(dt)
+    self.floatTiles:update(dt)
   end
 end
 
 function MapM:mousepressed(x, y, button, istouch)
   if self.mode == "collision" then
     self.collision:mousepressed(x, y, button, istouch)
-  elseif self.mode == "zindex" then
-    self.zindex:mousepressed(x, y, button, istouch)
+  elseif self.mode == "floatTiles" then
+    self.floatTiles:mousepressed(x, y, button, istouch)
   end
 end
 
@@ -114,8 +114,8 @@ function MapM:mousereleased(x, y, button, istouch)
   self.start = true
   if self.mode == "collision" then
     self.collision:mousereleased(x, y, button, istouch)
-  elseif self.mode == "zindex" then
-    self.zindex:mousereleased(x, y, button, istouch)
+  elseif self.mode == "floatTiles" then
+    self.floatTiles:mousereleased(x, y, button, istouch)
   end
 end
 
@@ -137,11 +137,11 @@ function MapM:keypressed(key, code)
     if key == "o" then self.onionSkin = not self.onionSkin end
     if key == "h" then self.helpMenu = not self.helpMenu end
     if key == "c" then self.mode = "collision" end
-    if key == "z" then self.mode = "zindex" end
+    if key == "z" then self.mode = "floatTiles" end
   elseif self.mode == "collision" then
     self.collision:keypressed(key, code)
-  elseif self.mode == "zindex" then
-    self.zindex:keypressed(key, code)
+  elseif self.mode == "floatTiles" then
+    self.floatTiles:keypressed(key, code)
   end
 end
 
@@ -257,8 +257,8 @@ function MapM:draw()
     self:drawToolBar()
   elseif self.mode == "collision" then
     self.collision:draw()
-  elseif self.mode == "zindex" then
-    self.zindex:draw()
+  elseif self.mode == "floatTiles" then
+    self.floatTiles:draw()
   end
 
   if self.helpMenu then self:drawHelpMenu() end   

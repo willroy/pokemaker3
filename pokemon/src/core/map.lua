@@ -35,8 +35,8 @@ function Map:init(id, x, y, width, height)
   self.backColor = {1,1,1}
   self.layers = {}
   self.collisions = {}
-  self.zindexes = {}
-  self.zindextiles = {}
+  self.float = {}
+  self.floatTiles = {}
 end
 
 function Map:update(dt)
@@ -57,7 +57,7 @@ end
 
 function Map:drawZIndexes()
   love.graphics.setColor(1,1,1)
-  for k, tile in pairs(self.zindextiles) do
+  for k, tile in pairs(self.floatTiles) do
     local tilesheet = tile["tilesheet"]
     local quad = tile["quad"]
     local x = tile["x"]
@@ -109,13 +109,13 @@ function Map:loadTiles()
             ["y"]=lineSplit[6]
           }
 
-          for a = 1, #self.zindexes do
-            if i == tonumber(self.zindexes[a]["layer"]) then
+          for a = 1, #self.float do
+            if i == tonumber(self.float[a]["layer"]) then
               local tileXY = {["x"]=tonumber(lineSplit[5]),["y"]=tonumber(lineSplit[6])}
-              local zindexXY = {["x"]=tonumber(self.zindexes[a]["x"]),["y"]=tonumber(self.zindexes[a]["y"])}
+              local zindexXY = {["x"]=tonumber(self.float[a]["x"]),["y"]=tonumber(self.float[a]["y"])}
 
               if tileXY["x"] == zindexXY["x"] and tileXY["y"] == zindexXY["y"] then
-                self.zindextiles[#self.zindextiles+1] = newTile
+                self.floatTiles[#self.floatTiles+1] = newTile
                 isInZ = true
               end
             end
@@ -132,26 +132,26 @@ function Map:loadTiles()
 end
 
 function Map:loadZIndex()
-  local file = "/home/will-roy/dev/pokemon3/pokemon/db/zindexes.snorlax"
+  local file = "/home/will-roy/dev/pokemon3/pokemon/db/float.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return end
 
-  local newZindexes = {}
+  local newFloatTiles = {}
   for line in io.lines(file) do
     local lineSplit = {}
     for str in string.gmatch(line, "([^,]+)") do
       table.insert(lineSplit, str)
     end
 
-    newZindexes[#newZindexes+1] = {
+    newFloatTiles[#newFloatTiles+1] = {
       ["layer"]=lineSplit[1],
       ["x"]=lineSplit[2],
       ["y"]=lineSplit[3]
     }
   end
 
-  self.zindexes = newZindexes
+  self.float = newFloatTiles
 end
 
 function Map:move(dir)

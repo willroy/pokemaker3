@@ -1,4 +1,4 @@
-local grid = love.graphics.newImage("pokemaker/assets/game/grid.png")
+local grid = love.graphics.newImage("pokemaker/assets/editor/grid.png")
 
 PaletteM = {}
 

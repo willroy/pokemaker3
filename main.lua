@@ -1,5 +1,5 @@
-local pokemakerGameREQ = require("pokemaker/src/gameM")
-local pokemakerMenuREQ = require("pokemaker/src/menuM")
+local pokemakerGameREQ = require("pokemaker/src/editor")
+local pokemakerMenuREQ = require("pokemaker/src/menu")
 local pokemonGameREQ = require("pokemon/src/game")
 local pokemonMenuREQ = require("pokemon/src/menu")
 
@@ -54,18 +54,27 @@ end
 
 function setCurrent(text)
 	if text == "startup" then current = Startup:new() end
-	if text == "pmak-game" then current = GameM:new() end
+	if text == "pmak-game" then current = EditorM:new() end
 	if text == "pmak-menu" then current = MenuM:new() end
 	if text == "pmon-game" then current = Game:new() end
 	if text == "pmon-menu" then current = Menu:new() end
 	current:init()
 end
 
+function openGame(project, inPokemon)
+	if inPokemon then
+		current = Game:new()
+	else
+		current = gameMenuM:new()
+	end
+	current:init(project)
+end
+
 function openFile(project, inPokemon)
 	if inPokemon then
 		current = Game:new()
 	else
-		current = GameM:new()
+		current = EditorM:new()
 	end
 	current:init(project)
 end

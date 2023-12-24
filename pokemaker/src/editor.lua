@@ -1,5 +1,5 @@
-local mapREQ = require("pokemaker/src/core/mapM")
-local paletteREQ = require("pokemaker/src/core/paletteM")
+local mapREQ = require("pokemaker/src/editorModules/map")
+local paletteREQ = require("pokemaker/src/editorModules/palette")
 
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
@@ -20,16 +20,16 @@ local tileSheets = {
   ["text"] = love.graphics.newImage("pokemaker/assets/tilesheets/text.png")
 }
 
-GameM = {}
+EditorM = {}
 
-function GameM:new(o)
+function EditorM:new(o)
   local o = o or {}
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-function GameM:init(project, new)
+function EditorM:init(project, new)
   self.project = project or "project1"
 
   if new then
@@ -51,27 +51,27 @@ function GameM:init(project, new)
   self.selectedTileSheet = 0
 end
 
-function GameM:update(dt)
+function EditorM:update(dt)
   self.palette:update(dt)
   self.map:update(dt)
 end
 
-function GameM:draw()
+function EditorM:draw()
   self.map:draw(dt)
   self.palette:draw(dt)
 end
 
-function GameM:mousepressed(x, y, button, istouch)
+function EditorM:mousepressed(x, y, button, istouch)
   self.palette:mousepressed(x, y, button, istouch)
   self.map:mousepressed(x, y, button, istouch)
 end
 
-function GameM:mousereleased(x, y, button, istouch)
+function EditorM:mousereleased(x, y, button, istouch)
   self.palette:mousereleased(x, y, button, istouch)
   self.map:mousereleased(x, y, button, istouch)
 end
 
-function GameM:keypressed(key, code)
+function EditorM:keypressed(key, code)
   if key == "escape" then
     self:save()
     setCurrent("pmak-menu")
@@ -93,23 +93,23 @@ function GameM:keypressed(key, code)
   self.map:keypressed(key, code)
 end
 
-function GameM:wheelmoved(x, y)
+function EditorM:wheelmoved(x, y)
   self.palette:wheelmoved(x, y)
   self.map:wheelmoved(x, y)
 end
 
-function GameM:save()
+function EditorM:save()
   self.map:save(self.project)
 end
 
-function GameM:load()
+function EditorM:load()
   self.map:load(self.project)
 end
 
-function GameM:setFolder(project)
+function EditorM:setFolder(project)
   self.project = project
 end
 
-function GameM:getPalette()
+function EditorM:getPalette()
   return self.palette
 end

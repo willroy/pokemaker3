@@ -5,23 +5,23 @@ local brushes = {
   ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
 }
 
-ZindexM = {}
+FloatTilesM = {}
 
-function ZindexM:new(o)
+function FloatTilesM:new(o)
   local o = o or {}
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-function ZindexM:init(id, x, y, width, height)
+function FloatTilesM:init(id, x, y, width, height)
   self.id = id or 0
   self.x = x or 0
   self.y = y or 0
   self.width = width or 0
   self.height = height or 0
   self.backColor = {1,1,1}
-  self.zindexes = {}
+  self.floatTiles = {}
 
   self.lastUpdated = {}
   self.lastDeleted = {}
@@ -35,12 +35,12 @@ function ZindexM:init(id, x, y, width, height)
   map:setOnionSkin(true)
 end
 
-function ZindexM:update(dt)
+function FloatTilesM:update(dt)
   self:removeTile()
   self:placeTile()
 end
 
-function ZindexM:removeTile()
+function FloatTilesM:removeTile()
   local x, y = love.mouse.getPosition()
   local pressed = love.mouse.isDown(2)
 
@@ -55,7 +55,7 @@ function ZindexM:removeTile()
 
   local newCols = {}
 
-  for k, col in pairs(self.zindexes) do
+  for k, col in pairs(self.floatTiles) do
     local found = false
     for i = 1, #self.brush do
       local brushX = relativeX+(self.brush[i][1]*32)
@@ -69,11 +69,11 @@ function ZindexM:removeTile()
     end
   end
 
-  self.zindexes = newCols
+  self.floatTiles = newCols
   self.lastDeleted = {relativeX, relativeY}
 end
 
-function ZindexM:placeTile()
+function FloatTilesM:placeTile()
   local x, y = love.mouse.getPosition()
   local pressed = love.mouse.isDown(1)
 
@@ -94,26 +94,26 @@ function ZindexM:placeTile()
     }
 
     local replaced = false
-    for k, tile in pairs(self.zindexes) do
+    for k, tile in pairs(self.floatTiles) do
       local x = relativeX+(self.brush[i][1]*32)
       local y = relativeY+(self.brush[i][2]*32)
       local tileX = tonumber(tile["x"])
       local tileY = tonumber(tile["y"])
       if x == tileX and y == tileY then
-        self.zindexes[k] = newCol
+        self.floatTiles[k] = newCol
         replaced = true
       end
     end
 
-    if not replaced then self.zindexes[#self.zindexes+1] = newCol end
+    if not replaced then self.floatTiles[#self.floatTiles+1] = newCol end
   end
 
   self.lastUpdated = {relativeX, relativeY}
 end
 
-function ZindexM:draw()
+function FloatTilesM:draw()
   love.graphics.setColor(1,1,1, 0.5)
-  for k, tile in pairs(self.zindexes) do
+  for k, tile in pairs(self.floatTiles) do
     local x = tile["x"]
     local y = tile["y"]
     love.graphics.setColor(1,0.8,0.8, 0.7)
@@ -124,13 +124,13 @@ function ZindexM:draw()
   love.graphics.setColor(1,1,1)
 end
 
-function ZindexM:mousepressed(x, y, button, istouch)
+function FloatTilesM:mousepressed(x, y, button, istouch)
 end
 
-function ZindexM:mousereleased(x, y, button, istouch)
+function FloatTilesM:mousereleased(x, y, button, istouch)
 end
 
-function ZindexM:keypressed(key, code)
+function FloatTilesM:keypressed(key, code)
   if key == "escape" then
     self:save(self.project)
     setCurrent("pmak-menu")
@@ -145,17 +145,17 @@ function ZindexM:keypressed(key, code)
   end
 end
 
-function ZindexM:wheelmoved(x, y)
+function FloatTilesM:wheelmoved(x, y)
 end
 
-function ZindexM:save(project)
+function FloatTilesM:save(project)
   if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
     lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
   end
 
-  local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/zindexes.snorlax", "w")
+  local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/floatTiles.snorlax", "w")
 
-  for k, tile in pairs(self.zindexes) do
+  for k, tile in pairs(self.floatTiles) do
     local layer = tile["layer"]
     local x = tile["x"]
     local y = tile["y"]
@@ -165,9 +165,9 @@ function ZindexM:save(project)
   file:close()
 end
 
-function ZindexM:load(project)
+function FloatTilesM:load(project)
   self.project = project
-  local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/zindexes.snorlax"
+  local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/floatTiles.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return false end
@@ -186,10 +186,10 @@ function ZindexM:load(project)
     }
   end
 
-  self.zindexes = newTiles
+  self.floatTiles = newTiles
 end
 
-function ZindexM:FolderExists(folder)
+function FloatTilesM:FolderExists(folder)
   if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
     return true
   else

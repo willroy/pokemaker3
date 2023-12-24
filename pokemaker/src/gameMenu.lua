@@ -1,4 +1,4 @@
-local background = love.graphics.newImage("pokemaker/assets/menu/background.png")
+local background = love.graphics.newImage("pokemaker/assets/menu/menu.png")
 
 MenuM = {}
 
@@ -14,7 +14,6 @@ function MenuM:init()
 
   local mainX = 1300
   local mainY = 1000
-  -- love.window.setMode(mainX, mainY, {resizable=true})
 end
 
 function MenuM:update(dt)
