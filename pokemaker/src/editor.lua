@@ -44,7 +44,7 @@ function EditorM:init(project, mapFile, new)
   self.palette = PaletteM:new()
   self.map = MapM:new()
 
-  self.palette:init(1, 40, 38, 224, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
+  self.palette:init(1, 40, 38, 256, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
   self.map:init(1, 38, 38, mainX-40, mainY-32)
   self.map:load(self.project, self.mapFile)

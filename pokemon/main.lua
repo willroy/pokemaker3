@@ -6,7 +6,7 @@ local game = Game:new()
 
 local icon = love.image.newImageData("assets/icon.png");
 
-local current = game
+current = game
 
 function love.load()
 	love.window.setTitle("pokemaker3")
