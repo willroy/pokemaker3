@@ -1,5 +1,3 @@
-require "lfs"
-
 local collisionREQ = require("pokemaker/src/modules/map/collision")
 local floatTilesREQ = require("pokemaker/src/modules/map/floatTiles")
 
@@ -328,7 +326,7 @@ end
 
 function MapM:save(project, mapFile)
   if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+    love.filesystem.createDirectory(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
   for k1, layer in pairs(self.layers) do
@@ -382,7 +380,8 @@ function MapM:load(project, mapFile)
 end
 
 function MapM:FolderExists(folder)
-  if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
+  local folderIsDir = love.filesystem.getInfo( folder )
+  if folderIsDir == "directory" then
     return true
   else
     return false

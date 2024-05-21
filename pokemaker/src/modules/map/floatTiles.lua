@@ -1,5 +1,3 @@
-require "lfs"
-
 local brushes = {
   ["pencil"]={{0,0}},
   ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
@@ -198,7 +196,7 @@ function FloatTilesM:load(project, mapFile)
 end
 
 function FloatTilesM:FolderExists(folder)
-  if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
+  if love.filesystem.getInfo( folder )["type"] == "directory" then
     return true
   else
     return false

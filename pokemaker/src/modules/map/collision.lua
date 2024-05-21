@@ -1,5 +1,3 @@
-require "lfs"
-
 local brushes = {
   ["pencil"]={{0,0}},
   ["brush"]={{0,0},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}}
@@ -141,7 +139,7 @@ end
 
 function CollisionM:save(project, mapFile)
   if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+    love.filesystem.createDirectory(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
   local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax", "w")
@@ -180,7 +178,7 @@ function CollisionM:load(project, mapFile)
 end
 
 function CollisionM:FolderExists(folder)
-  if lfs.attributes(folder:gsub("\\$",""),"mode") == "directory" then
+  if love.filesystem.getInfo( folder )["type"] == "directory" then
     return true
   else
     return false
