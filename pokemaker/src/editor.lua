@@ -117,7 +117,7 @@ function EditorM:wheelmoved(x, y)
 end
 
 function EditorM:save()
-  -- self.map:save(self.project, self.mapFile)
+  self.map:save(self.project, self.mapFile)
 end
 
 function EditorM:load()
