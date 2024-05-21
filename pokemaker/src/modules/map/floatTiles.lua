@@ -154,42 +154,41 @@ function FloatTilesM:wheelmoved(x, y)
 end
 
 function FloatTilesM:save(project, mapFile)
-  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+  if not self:FolderExists("/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    lfs.mkdir("/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
-  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax", "w")
+  local filename = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax"
+  
+  love.filesystem.write(filename, "")
 
   for k, tile in pairs(self.floatTiles) do
     local layer = tile["layer"]
     local x = tile["x"]
     local y = tile["y"]
-    file:write(layer..","..x..","..y.."\n")
+    love.filesystem.append(filename, layer..","..x..","..y.."\n")
   end
-
-  file:close()
 end
 
 function FloatTilesM:load(project, mapFile)
   self.project = project
   self.mapFile = mapFile
-  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax"
-  local f = io.open(file, "r")
-  if f then f:close() end
-  if f == nil then return false end
+  local file = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax"
 
   local newTiles = {}
 
-  for line in io.lines(file) do
-    local lineSplit = {}
-    for str in string.gmatch(line, "([^,]+)") do
-      table.insert(lineSplit, str)
+  if love.filesystem.getInfo(file) ~= nil then
+    for line in love.filesystem.lines(file) do
+      local lineSplit = {}
+      for str in string.gmatch(line, "([^,]+)") do
+        table.insert(lineSplit, str)
+      end
+      newTiles[#newTiles+1] = {
+      ["layer"]=lineSplit[1],
+      ["x"]=lineSplit[2],
+      ["y"]=lineSplit[3]
+      }
     end
-    newTiles[#newTiles+1] = {
-    ["layer"]=lineSplit[1],
-    ["x"]=lineSplit[2],
-    ["y"]=lineSplit[3]
-    }
   end
 
   self.floatTiles = newTiles

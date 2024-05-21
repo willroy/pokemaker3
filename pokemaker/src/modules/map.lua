@@ -319,19 +319,21 @@ function MapM:drawHelpMenu()
   love.graphics.print("g: Quick Test Map", 520,340)
   love.graphics.print("c: Collision Mapping", 520,360)
   love.graphics.print("z: Float Tile Mapping", 520,380)
+  love.graphics.print("h: Toggle this help menu", 520,400)
   love.graphics.setColor(1,1,1)
 end
 
 -- SAVE LOAD --
 
 function MapM:save(project, mapFile)
-  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    love.filesystem.createDirectory(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+  if not self:FolderExists("/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    love.filesystem.createDirectory("/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
   for k1, layer in pairs(self.layers) do
+    local filename = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..k1..".snorlax"
     if #layer > 0 then
-      local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..k1..".snorlax", "w")
+      love.filesystem.write(filename, "")
       for k2, tile in pairs(layer) do
         local id = tile["id"]
         local tilesheet = tile["tilesheet"]
@@ -339,9 +341,8 @@ function MapM:save(project, mapFile)
         local quadY = tile["quadY"]
         local x = tile["x"]
         local y = tile["y"]
-        file:write(id..","..tilesheet..","..quadX..","..quadY..","..x..","..y.."\n")
+        love.filesystem.append(filename, id..","..tilesheet..","..quadX..","..quadY..","..x..","..y.."\n")
       end
-      file:close()
     end
   end
 end
@@ -352,12 +353,10 @@ function MapM:load(project, mapFile)
   local newLayers = {}
 
   for i = 1, 10 do
-    local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..i..".snorlax"
-    local f = io.open(file, "r")
-    if f then f:close() end
-    if f ~= nil then
-      newLayers[i] = {}
-      for line in io.lines(file) do
+    local file = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..i..".snorlax"
+    newLayers[i] = {}
+    if love.filesystem.getInfo(file) ~= nil then
+      for line in love.filesystem.lines(file) do
         local lineSplit = {}
         for str in string.gmatch(line, "([^,]+)") do
           table.insert(lineSplit, str)
@@ -369,8 +368,7 @@ function MapM:load(project, mapFile)
         ["quadX"]=lineSplit[3], 
         ["quadY"]=lineSplit[4],
         ["x"]=lineSplit[5], 
-        ["y"]=lineSplit[6]
-        }
+        ["y"]=lineSplit[6]}
       end
     end
   end

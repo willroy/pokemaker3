@@ -26,12 +26,21 @@ function ProjectMenuM:draw()
       love.graphics.rectangle("line", 60, 270+(i*25), 300, 25)
     end
   end
+  love.graphics.print("+", 70, 270+((#self.maps+1)*25))
+  if math.floor((love.mouse.getY()-300)/25)+1 == (#self.maps+1) then
+    love.graphics.rectangle("line", 60, 270+((#self.maps+1)*25), 300, 25)
+  end
   love.graphics.setColor(1,1,1)
 end
 
 function ProjectMenuM:mousepressed(x, y, button, istouch)
   if (#self.maps >= math.floor((y-300)/25)+1 and math.floor((y-300)/25)+1 > 0) then
     openMap(self.project, self.maps[math.floor((y-300)/25)+1])
+  end
+  if (math.floor((y-300)/25)+1 == #self.maps+1) then
+    num = love.filesystem.getDirectoryItems("/pokemaker/projects/"..self.project)
+    love.filesystem.createDirectory("/pokemaker/projects/"..self.project.."map-"..#num+1)
+    self.maps[#self.maps+1] = "map-"..#num+1
   end
 end
 

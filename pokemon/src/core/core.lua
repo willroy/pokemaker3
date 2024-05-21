@@ -153,21 +153,20 @@ end
 function Core:loadCollision(project)
   if (project == nil) then project = "/pokemon/db/" end
 
-  local file = love.filesystem.getWorkingDirectory()..project.."cols.snorlax"
-  local f = io.open(file, "r")
-  if f then f:close() end
-  if f == nil then return {} end
+  local file = project.."cols.snorlax"
 
   local newCols = {}
-  for line in io.lines(file) do
-    local lineSplit = {}
-    for str in string.gmatch(line, "([^,]+)") do
-      table.insert(lineSplit, str)
+  if love.filesystem.getInfo(file) ~= nil then
+    for line in love.filesystem.lines(file) do
+      local lineSplit = {}
+      for str in string.gmatch(line, "([^,]+)") do
+        table.insert(lineSplit, str)
+      end
+      newCols[#newCols+1] = {
+        ["x"]=lineSplit[1],
+        ["y"]=lineSplit[2]
+      }
     end
-    newCols[#newCols+1] = {
-      ["x"]=lineSplit[1],
-      ["y"]=lineSplit[2]
-    }
   end
 
   return newCols

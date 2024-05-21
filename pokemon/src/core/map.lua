@@ -91,12 +91,10 @@ function Map:loadTiles(project)
   if (project == nil) then project = "/pokemon/db/" end
 
   for i = 1, 10 do
-    local file = love.filesystem.getWorkingDirectory()..project.."tiles-l"..i..".snorlax"
-    local f = io.open(file, "r")
-    if f then f:close() end
-    if f ~= nil then
-        newLayers[i] = {}
-        for line in io.lines(file) do
+    local file = project.."tiles-l"..i..".snorlax"
+    if love.filesystem.getInfo(file) ~= nil then
+      newLayers[i] = {}
+      for line in love.filesystem.lines(file) do
           local isInZ = false
           local lineSplit = {}
           for str in string.gmatch(line, "([^,]+)") do
@@ -138,23 +136,22 @@ end
 function Map:loadFloatTiles(project)
   if (project == nil) then project = "/pokemon/db/" end
 
-  local file = love.filesystem.getWorkingDirectory()..project.."float.snorlax"
-  local f = io.open(file, "r")
-  if f then f:close() end
-  if f == nil then return end
+  local file = project.."float.snorlax"
 
   local newFloatTiles = {}
-  for line in io.lines(file) do
-    local lineSplit = {}
-    for str in string.gmatch(line, "([^,]+)") do
-      table.insert(lineSplit, str)
-    end
+  if love.filesystem.getInfo(file) ~= nil then
+    for line in love.filesystem.lines(file) do
+      local lineSplit = {}
+      for str in string.gmatch(line, "([^,]+)") do
+        table.insert(lineSplit, str)
+      end
 
-    newFloatTiles[#newFloatTiles+1] = {
-      ["layer"]=lineSplit[1],
-      ["x"]=lineSplit[2],
-      ["y"]=lineSplit[3]
-    }
+      newFloatTiles[#newFloatTiles+1] = {
+        ["layer"]=lineSplit[1],
+        ["x"]=lineSplit[2],
+        ["y"]=lineSplit[3]
+      }
+    end
   end
 
   self.float = newFloatTiles

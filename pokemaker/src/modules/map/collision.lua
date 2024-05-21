@@ -138,40 +138,40 @@ function CollisionM:wheelmoved(x, y)
 end
 
 function CollisionM:save(project, mapFile)
-  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    love.filesystem.createDirectory(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+  if not self:FolderExists("/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    love.filesystem.createDirectory("/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
-  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax", "w")
+  local filename = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax"
+
+  love.filesystem.write(filename, "")
 
   for k, tile in pairs(self.cols) do
     local x = tile["x"]
     local y = tile["y"]
-    file:write(x..","..y.."\n")
+    file:write()
+    love.filesystem.append(x..","..y.."\n")
   end
-
-  file:close()
 end
 
 function CollisionM:load(project, mapFile)
   self.project = project
   self.mapFile = mapFile
-  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax"
-  local f = io.open(file, "r")
-  if f then f:close() end
-  if f == nil then return false end
+  local file = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax"
 
   local newTiles = {}
 
-  for line in io.lines(file) do
-    local lineSplit = {}
-    for str in string.gmatch(line, "([^,]+)") do
-      table.insert(lineSplit, str)
+  if love.filesystem.getInfo(file) ~= nil then
+    for line in love.filesystem.lines(file) do
+      local lineSplit = {}
+      for str in string.gmatch(line, "([^,]+)") do
+        table.insert(lineSplit, str)
+      end
+      newTiles[#newTiles+1] = {
+        ["x"]=lineSplit[1],
+        ["y"]=lineSplit[2]
+      }
     end
-    newTiles[#newTiles+1] = {
-      ["x"]=lineSplit[1],
-      ["y"]=lineSplit[2]
-    }
   end
 
   self.cols = newTiles
