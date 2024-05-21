@@ -266,8 +266,7 @@ end
 
 function MapM:drawMap()
   love.graphics.setColor(1,1,1)
-  -- Grid is slightly offset for some reason, so put 2 and 12 to correct, probably due to pos of MapM
-  love.graphics.draw(grid, self.gridQuad, self.x-2, self.y+12)
+  love.graphics.draw(grid, self.gridQuad, self.x, self.y-50)
   for k1, layer in pairs(self.layers) do
     if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
     else love.graphics.setColor(1,1,1,0.6) end

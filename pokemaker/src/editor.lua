@@ -50,18 +50,14 @@ function EditorM:init(project, mapFile, new)
 
   self.palette:init(1, 1042, 38, 256, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
-  self.map:init(1, 38, 38, mainX-40, mainY-32)
+  self.map:init(1, 35, 35, mainX-40, mainY-32)
   self.map:load(self.project, self.mapFile)
 
-  self.menuSections = {}
-  
-  fileMenuSection = MenuSectionM:new()
-  fileMenuSection:init(1)
+  self.fileMenuSection = MenuSectionM:new()
+  self.fileMenuSection:init("file", 0)
 
-  brushMenuSection = MenuSectionM:new()
-  brushMenuSection:init(2)
-
-  self.menuSections[#self.menuSections+1] = fileMenuSection
+  self.brushMenuSection = MenuSectionM:new()
+  self.brushMenuSection:init("brush", 1)
 
   self.selectedTileSheet = 0
 end
@@ -69,6 +65,9 @@ end
 function EditorM:update(dt)
   self.palette:update(dt)
   self.map:update(dt)
+
+  self.fileMenuSection:update(dt)
+  self.brushMenuSection:update(dt)
 end
 
 function EditorM:draw()
@@ -76,16 +75,25 @@ function EditorM:draw()
   love.graphics.draw(backgroundBack, 0, 0)
   self.palette:draw(dt)
   love.graphics.draw(backgroundFront, 0, 0)
+
+  self.fileMenuSection:draw()
+  self.brushMenuSection:draw()
 end
 
 function EditorM:mousepressed(x, y, button, istouch)
   self.palette:mousepressed(x, y, button, istouch)
   self.map:mousepressed(x, y, button, istouch)
+
+  self.fileMenuSection:mousepressed(x, y, button, istouch)
+  self.brushMenuSection:mousepressed(x, y, button, istouch)
 end
 
 function EditorM:mousereleased(x, y, button, istouch)
   self.palette:mousereleased(x, y, button, istouch)
   self.map:mousereleased(x, y, button, istouch)
+  
+  self.fileMenuSection:mousereleased(x, y, button, istouch)
+  self.brushMenuSection:mousereleased(x, y, button, istouch)
 end
 
 function EditorM:keypressed(key, code)
@@ -117,7 +125,7 @@ function EditorM:wheelmoved(x, y)
 end
 
 function EditorM:save()
-  self.map:save(self.project, self.mapFile)
+  -- self.map:save(self.project, self.mapFile)
 end
 
 function EditorM:load()
