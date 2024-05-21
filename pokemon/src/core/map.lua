@@ -43,7 +43,7 @@ function Map:update(dt)
 end
 
 function Map:draw()
-  love.graphics.setColor(0.416, 0.31, 0.439)
+  love.graphics.setColor(0.376, 0.227, 0.38)
   love.graphics.rectangle("fill", 0, 0, 1300, 1000)
   love.graphics.setColor(1,1,1)
   for k1, layer in pairs(self.layers) do

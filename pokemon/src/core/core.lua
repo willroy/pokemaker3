@@ -156,7 +156,7 @@ function Core:loadCollision(project)
   local file = love.filesystem.getWorkingDirectory()..project.."cols.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
-  if f == nil then return end
+  if f == nil then return {} end
 
   local newCols = {}
   for line in io.lines(file) do
