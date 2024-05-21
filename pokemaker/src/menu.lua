@@ -10,7 +10,7 @@ function MenuM:new(o)
 end
 
 function MenuM:init()
-  self.projects = dirLookup(love.filesystem.getWorkingDirectory().."/pokemaker/projects/")
+  self.projects = dirLookup("/pokemaker/projects/")
 end
 
 function MenuM:update(dt)

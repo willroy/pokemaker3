@@ -11,7 +11,7 @@ end
 
 function ProjectMenuM:init(project)
   self.project = project
-  self.maps = dirLookup(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..self.project.."/maps/")
+  self.maps = dirLookup("/pokemaker/projects/"..self.project.."/maps/")
 end
 
 function ProjectMenuM:update(dt)
