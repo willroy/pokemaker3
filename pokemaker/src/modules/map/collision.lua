@@ -129,6 +129,7 @@ end
 
 function CollisionM:keypressed(key, code)
   if key == "escape" then
+    self:save(self.project, self.mapFile)
     current:getMap().mode = "tiles"
     self.hasBeenInit = false
   end
@@ -138,10 +139,6 @@ function CollisionM:wheelmoved(x, y)
 end
 
 function CollisionM:save(project, mapFile)
-  if not self:FolderExists("/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    love.filesystem.createDirectory("/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
-  end
-
   local filename = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax"
 
   love.filesystem.write(filename, "")
@@ -149,8 +146,7 @@ function CollisionM:save(project, mapFile)
   for k, tile in pairs(self.cols) do
     local x = tile["x"]
     local y = tile["y"]
-    file:write()
-    love.filesystem.append(x..","..y.."\n")
+    love.filesystem.append(filename, x..","..y.."\n")
   end
 end
 

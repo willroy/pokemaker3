@@ -136,6 +136,7 @@ end
 
 function FloatTilesM:keypressed(key, code)
   if key == "escape" then
+    self:save(self.project, self.mapFile)
     current:getMap().mode = "tiles"
     current:getMap():setOnionSkin(false)
     self.hasBeenInit = false
@@ -154,10 +155,6 @@ function FloatTilesM:wheelmoved(x, y)
 end
 
 function FloatTilesM:save(project, mapFile)
-  if not self:FolderExists("/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    lfs.mkdir("/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
-  end
-
   local filename = "/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax"
   
   love.filesystem.write(filename, "")
