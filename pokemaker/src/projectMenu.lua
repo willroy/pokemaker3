@@ -46,16 +46,3 @@ end
 
 function ProjectMenuM:wheelmoved(x, y)
 end
-
-function dirLookup(dir)
-  local i, t, popen = 0, {}, io.popen
-  local pfile = popen('ls -a "'..dir..'"')
-  for filename in pfile:lines() do
-    if filename ~= "." and filename ~= ".." then
-      i = i + 1
-      t[i] = filename
-    end
-  end
-  pfile:close()
-  return t
-end

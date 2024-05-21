@@ -76,3 +76,12 @@ function openGame(project)
 	current = Game:new()
 	current:init(project)
 end
+
+function dirLookup(dir)
+  local files = love.filesystem.getDirectoryItems(dir)
+  local t = {}
+  for k, file in ipairs(files) do
+    t[#t+1] = file
+  end
+  return t
+end
