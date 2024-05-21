@@ -11,6 +11,7 @@ function FloatTilesM:new(o)
   local o = o or {}
   setmetatable(o, self)
   self.__index = self
+  self.hasBeenInit = false
   return o
 end
 
@@ -43,6 +44,8 @@ end
 
 function FloatTilesM:removeTile()
   local x, y = love.mouse.getPosition()
+  x = x - current:getMap().moveX
+  y = y - current:getMap().moveY
   local pressed = love.mouse.isDown(2)
 
   if not pressed then return false end
@@ -76,6 +79,8 @@ end
 
 function FloatTilesM:placeTile()
   local x, y = love.mouse.getPosition()
+  x = x - current:getMap().moveX
+  y = y - current:getMap().moveY
   local pressed = love.mouse.isDown(1)
 
   if not pressed then return false end
@@ -118,7 +123,7 @@ function FloatTilesM:draw()
     local x = tile["x"]
     local y = tile["y"]
     love.graphics.setColor(1,0.8,0.8, 0.7)
-    love.graphics.rectangle("fill", x, y, 32, 32)
+    love.graphics.rectangle("fill", x+current:getMap().moveX, y+current:getMap().moveY, 32, 32)
   end
   love.graphics.setColor(0,0,0)
   love.graphics.print("Layer: "..self.layer, 1200,15)
@@ -133,8 +138,9 @@ end
 
 function FloatTilesM:keypressed(key, code)
   if key == "escape" then
-    self:save(self.project, self.mapFile)
-    setCurrent("pmak-menu")
+    current:getMap().mode = "tiles"
+    current:getMap():setOnionSkin(false)
+    self.hasBeenInit = false
   end
 
   if key == "[" and self.layer > 1 then

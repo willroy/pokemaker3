@@ -89,12 +89,6 @@ function EditorM:mousereleased(x, y, button, istouch)
 end
 
 function EditorM:keypressed(key, code)
-  if key == "escape" then
-    self:save()
-    setCurrent("pmak-menu")
-    openProject(self.project)
-  end
-
   -- if key == "s" then self:save() end
   -- if key == "l" then self:load() end#
 

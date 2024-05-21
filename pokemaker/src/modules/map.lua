@@ -68,33 +68,31 @@ function MapM:init(id, x, y, width, height)
 
   self.mode = "tiles"
   self.collision = CollisionM:new()
-  self.collisionINIT = false
   self.floatTiles = FloatTilesM:new()
-  self.floatTilesINIT = false
 
   self.start = false
 end
 
 function MapM:update(dt)
   local palette = current:getPalette()
+  self:move()
   if self.mode == "tiles" then
-    self:move()
     self:removeTile()
     self:placeTile()
   elseif self.mode == "collision" then
-    if self.collisionINIT == false then 
+    if self.collision.hasBeenInit == false then 
       self.collision:init(self.id, self.x, self.y, self.width, self.height)
       self.collision:load(self.project, self.mapFile)
       palette:disable()
-      self.collisionINIT = true
+      self.collision.hasBeenInit = true
     end
     self.collision:update(dt)
   elseif self.mode == "floatTiles" then
-    if self.floatTilesINIT == false then 
+    if self.floatTiles.hasBeenInit == false then 
       self.floatTiles:init(self.id, self.x, self.y, self.width, self.height)
       self.floatTiles:load(self.project, self.mapFile)
       palette:disable()
-      self.floatTilesINIT = true
+      self.floatTiles.hasBeenInit = true
     end
     self.floatTiles:update(dt)
   end
@@ -119,6 +117,12 @@ end
 
 function MapM:keypressed(key, code)
   if self.mode == "tiles" then
+    if key == "escape" then
+      current:save()
+      setCurrent("pmak-menu")
+      openProject(self.project)
+    end
+
     if key == "b" then
       if self.brush == brushes["pencil"] then self.brush = brushes["brush"]
       elseif self.brush == brushes["brush"] then self.brush = brushes["brushXL"]
