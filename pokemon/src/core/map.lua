@@ -81,7 +81,7 @@ function Map:wheelmoved(x, y)
 end
 
 function Map:load(project)
-  self:loadFloatTiles()
+  self:loadFloatTiles(project)
   self:loadTiles(project)
 end
 
@@ -135,8 +135,10 @@ function Map:loadTiles(project)
   self.layers = newLayers
 end
 
-function Map:loadFloatTiles()
-  local file = love.filesystem.getWorkingDirectory().."/pokemon/db/float.snorlax"
+function Map:loadFloatTiles(project)
+  if (project == nil) then project = "/pokemon/db/" end
+
+  local file = love.filesystem.getWorkingDirectory()..project.."float.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return end

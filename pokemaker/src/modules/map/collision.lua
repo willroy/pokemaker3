@@ -29,6 +29,7 @@ function CollisionM:init(id, x, y, width, height)
   self.brush = brushes["pencil"]
 
   self.project = ""
+  self.mapFile = ""
 end
 
 function CollisionM:update(dt)
@@ -125,7 +126,7 @@ end
 
 function CollisionM:keypressed(key, code)
   if key == "escape" then
-    self:save(self.project)
+    self:save(self.project, self.mapFile)
     setCurrent("pmak-menu")
   end
 end
@@ -133,12 +134,12 @@ end
 function CollisionM:wheelmoved(x, y)
 end
 
-function CollisionM:save(project)
-  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/") then
-    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/")
+function CollisionM:save(project, mapFile)
+  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
-  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/cols.snorlax", "w")
+  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax", "w")
 
   for k, tile in pairs(self.cols) do
     local x = tile["x"]
@@ -149,9 +150,10 @@ function CollisionM:save(project)
   file:close()
 end
 
-function CollisionM:load(project)
+function CollisionM:load(project, mapFile)
   self.project = project
-  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/cols.snorlax"
+  self.mapFile = mapFile
+  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/cols.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return false end

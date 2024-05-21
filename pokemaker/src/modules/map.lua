@@ -84,7 +84,7 @@ function MapM:update(dt)
   elseif self.mode == "collision" then
     if self.collisionINIT == false then 
       self.collision:init(self.id, self.x, self.y, self.width, self.height)
-      self.collision:load(self.mapFile)
+      self.collision:load(self.project, self.mapFile)
       palette:disable()
       self.collisionINIT = true
     end
@@ -92,7 +92,7 @@ function MapM:update(dt)
   elseif self.mode == "floatTiles" then
     if self.floatTilesINIT == false then 
       self.floatTiles:init(self.id, self.x, self.y, self.width, self.height)
-      self.floatTiles:load(self.mapFile)
+      self.floatTiles:load(self.project, self.mapFile)
       palette:disable()
       self.floatTilesINIT = true
     end
@@ -315,6 +315,8 @@ function MapM:drawHelpMenu()
   love.graphics.print("b: cycle brush types", 520,300)
   love.graphics.print("o: Onion Skin on/off", 520,320)
   love.graphics.print("g: Quick Test Map", 520,340)
+  love.graphics.print("c: Collision Mapping", 520,360)
+  love.graphics.print("z: Float Tile Mapping", 520,380)
   love.graphics.setColor(1,1,1)
 end
 

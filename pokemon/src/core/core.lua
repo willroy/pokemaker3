@@ -32,7 +32,7 @@ function Core:init(project)
   self.player:init(612, 456)
 
   self.move = {["busy"]=false, ["dir"]={0,0}, ["tick"]=0, ["startTick"]=0}
-  self.collisions = self:loadCollision()
+  self.collisions = self:loadCollision(project)
   self.debug = false
 end
 
@@ -150,8 +150,10 @@ function Core:wheelmoved(x, y)
   self.player:wheelmoved(x, y)
 end
 
-function Core:loadCollision()
-  local file = love.filesystem.getWorkingDirectory().."/pokemon/db/cols.snorlax"
+function Core:loadCollision(project)
+  if (project == nil) then project = "/pokemon/db/" end
+
+  local file = love.filesystem.getWorkingDirectory()..project.."cols.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return end

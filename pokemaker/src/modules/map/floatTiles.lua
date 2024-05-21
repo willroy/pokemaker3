@@ -29,10 +29,11 @@ function FloatTilesM:init(id, x, y, width, height)
   self.brush = brushes["pencil"]
 
   self.project = ""
+  self.mapFile = ""
 
   self.layer = 1
 
-  map:setOnionSkin(true)
+  current:getMap():setOnionSkin(true)
 end
 
 function FloatTilesM:update(dt)
@@ -132,28 +133,28 @@ end
 
 function FloatTilesM:keypressed(key, code)
   if key == "escape" then
-    self:save(self.project)
+    self:save(self.project, self.mapFile)
     setCurrent("pmak-menu")
   end
 
   if key == "[" and self.layer > 1 then
     self.layer = self.layer - 1
-    map:setLayer(self.layer)
+    current:getMap():setLayer(self.layer)
   elseif key == "]" then
     self.layer = self.layer + 1
-    map:setLayer(self.layer)
+    current:getMap():setLayer(self.layer)
   end
 end
 
 function FloatTilesM:wheelmoved(x, y)
 end
 
-function FloatTilesM:save(project)
-  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/") then
-    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/")
+function FloatTilesM:save(project, mapFile)
+  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
-  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/floatTiles.snorlax", "w")
+  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax", "w")
 
   for k, tile in pairs(self.floatTiles) do
     local layer = tile["layer"]
@@ -165,9 +166,10 @@ function FloatTilesM:save(project)
   file:close()
 end
 
-function FloatTilesM:load(project)
+function FloatTilesM:load(project, mapFile)
   self.project = project
-  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/floatTiles.snorlax"
+  self.mapFile = mapFile
+  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/float.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return false end

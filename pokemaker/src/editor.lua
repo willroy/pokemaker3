@@ -138,3 +138,7 @@ end
 function EditorM:getPalette()
   return self.palette
 end
+
+function EditorM:getMap()
+  return self.map
+end

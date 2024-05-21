@@ -122,9 +122,9 @@ function PaletteM:wheelmoved(x, y)
   if mouseY < self.y or mouseY > (self.y+self.height) then return false end
 
   local offset = 64
-  if lctrlDown then offset = 128 end 
+  if lctrlDown then offset = 128 end
   if y < 0 then self.tileSheetOffset = self.tileSheetOffset - (-y*offset) end
-  if y > 0 then self.tileSheetOffset = self.tileSheetOffset + (y*offset) end
+  if y > 0 and self.tileSheetOffset < self.y then self.tileSheetOffset = self.tileSheetOffset + (y*offset) end
 end
 
 function PaletteM:getSelected()
