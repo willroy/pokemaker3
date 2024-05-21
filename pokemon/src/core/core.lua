@@ -18,12 +18,16 @@ function Core:new(o)
   return o
 end
 
-function Core:init()
+function Core:init(project)
   self.map = Map:new()
   self.player = Player:new()
 
   self.map:init(1, -32, -32, 1300, 1000)
-  self.map:load()
+  if project ~= nil then
+    self.map:load(project)
+  else
+    self.map:load()
+  end
 
   self.player:init(612, 456)
 

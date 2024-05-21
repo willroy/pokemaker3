@@ -107,6 +107,12 @@ function EditorM:keypressed(key, code)
     self.palette:setTileSheet(tileSheets[tileSheetNames[self.selectedTileSheet]],tileSheetNames[self.selectedTileSheet])
   end
 
+  if key == "g" then
+    self:save()
+    local proj = "/pokemaker/projects/"..self.project.."/maps/"..self.mapFile.."/" 
+    openGame(proj)
+  end
+
   self.palette:keypressed(key, code)
   self.map:keypressed(key, code)
 end

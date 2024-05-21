@@ -82,14 +82,16 @@ end
 
 function Map:load(project)
   self:loadFloatTiles()
-  self:loadTiles()
+  self:loadTiles(project)
 end
 
-function Map:loadTiles()
+function Map:loadTiles(project)
   local newLayers = {}
 
+  if (project == nil) then project = "/pokemon/db/" end
+
   for i = 1, 10 do
-    local file = love.filesystem.getWorkingDirectory().."/pokemon/db/tiles-l"..i..".snorlax"
+    local file = love.filesystem.getWorkingDirectory()..project.."tiles-l"..i..".snorlax"
     local f = io.open(file, "r")
     if f then f:close() end
     if f ~= nil then

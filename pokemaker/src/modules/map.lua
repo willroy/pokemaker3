@@ -314,6 +314,7 @@ function MapM:drawHelpMenu()
   love.graphics.print("]: up a layer", 520,280)
   love.graphics.print("b: cycle brush types", 520,300)
   love.graphics.print("o: Onion Skin on/off", 520,320)
+  love.graphics.print("g: Quick Test Map", 520,340)
   love.graphics.setColor(1,1,1)
 end
 

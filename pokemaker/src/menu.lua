@@ -39,7 +39,7 @@ end
 
 function MenuM:keypressed(key, code)
   if key == "escape" then
-    love.event.push("quit")
+    setCurrent("startup")
   end
 end
 

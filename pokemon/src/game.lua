@@ -9,9 +9,9 @@ function Game:new(o)
   return o
 end
 
-function Game:init()
+function Game:init(project)
   self.core = Core:new()
-  self.core:init(1, 0, 0, 1300, 1000)
+  self.core:init(project)
 end
 
 function Game:update(dt)
@@ -32,7 +32,7 @@ end
 
 function Game:keypressed(key, code)
   if key == "escape" then
-    love.event.push("quit")
+    setCurrent("startup")
   end
   self.core:keypressed(key, code)
 end
