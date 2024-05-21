@@ -29,6 +29,7 @@ function MenuM:draw()
   if math.floor((love.mouse.getY()-300)/25)+1 == (#self.projects+1) then
     love.graphics.rectangle("line", 60, 270+((#self.projects+1)*25), 300, 25)
   end
+  love.graphics.print(love.filesystem.getSaveDirectory().."/projects", 800, 950)
   love.graphics.setColor(1,1,1)
 end
 
