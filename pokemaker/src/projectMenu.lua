@@ -39,7 +39,7 @@ function ProjectMenuM:mousepressed(x, y, button, istouch)
   end
   if (math.floor((y-300)/25)+1 == #self.maps+1) then
     num = love.filesystem.getDirectoryItems("/pokemaker/projects/"..self.project)
-    love.filesystem.createDirectory("/pokemaker/projects/"..self.project.."map-"..#num+1)
+    love.filesystem.createDirectory("/pokemaker/projects/"..self.project.."/map-"..#num+1)
     self.maps[#self.maps+1] = "map-"..#num+1
   end
 end
