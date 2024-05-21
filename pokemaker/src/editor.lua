@@ -1,5 +1,6 @@
-local mapREQ = require("pokemaker/src/editorModules/map")
-local paletteREQ = require("pokemaker/src/editorModules/palette")
+local mapREQ = require("pokemaker/src/modules/map")
+local paletteREQ = require("pokemaker/src/modules/palette")
+local menuSectionREQ = require("pokemaker/src/modules/menu/menuSection")
 
 local tileSheetNames = {"interior_electronics","interior_flooring","interior_general","interior_misc","interior_misc2","interior_stairs","interior_tables","interior_walls","outside_buildings","outside_ground","outside_items","outside_misc","outside_rocks","outside_vegetation","text"}
 local tileSheets = {
@@ -48,6 +49,16 @@ function EditorM:init(project, mapFile, new)
 
   self.map:init(1, 38, 38, mainX-40, mainY-32)
   self.map:load(self.project, self.mapFile)
+
+  self.menuSections = {}
+  
+  fileMenuSection = MenuSectionM:new()
+  fileMenuSection:init(1)
+
+  brushMenuSection = MenuSectionM:new()
+  brushMenuSection:init(2)
+
+  self.menuSections[#self.menuSections+1] = fileMenuSection
 
   self.selectedTileSheet = 0
 end

@@ -1,23 +1,23 @@
 local background = love.graphics.newImage("pokemaker/assets/menu/game-menu.png")
 
-GameMenuM = {}
+ProjectMenuM = {}
 
-function GameMenuM:new(o)
+function ProjectMenuM:new(o)
   local o = o or {}
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-function GameMenuM:init(project)
+function ProjectMenuM:init(project)
   self.project = project
   self.maps = dirLookup("/home/will-roy/dev/pokemon3/pokemaker/projects/"..self.project.."/maps/")
 end
 
-function GameMenuM:update(dt)
+function ProjectMenuM:update(dt)
 end
 
-function GameMenuM:draw()
+function ProjectMenuM:draw()
   love.graphics.draw(background, 0, 0)
   love.graphics.setColor(0,0,0)
   for i = 1, #self.maps do
@@ -29,20 +29,20 @@ function GameMenuM:draw()
   love.graphics.setColor(1,1,1)
 end
 
-function GameMenuM:mousepressed(x, y, button, istouch)
+function ProjectMenuM:mousepressed(x, y, button, istouch)
   openMap(self.project, self.maps[math.floor((y-300)/25)+1])
 end
 
-function GameMenuM:mousereleased(x, y, button, istouch)
+function ProjectMenuM:mousereleased(x, y, button, istouch)
 end
 
-function GameMenuM:keypressed(key, code)
+function ProjectMenuM:keypressed(key, code)
   if key == "escape" then
     setCurrent("pmak-menu")
   end
 end
 
-function GameMenuM:wheelmoved(x, y)
+function ProjectMenuM:wheelmoved(x, y)
 end
  
 function dirLookup(dir)

@@ -1,7 +1,7 @@
 require "lfs"
 
-local collisionREQ = require("pokemaker/src/editorModules/collision")
-local floatTilesREQ = require("pokemaker/src/editorModules/floatTiles")
+local collisionREQ = require("pokemaker/src/modules/map/collision")
+local floatTilesREQ = require("pokemaker/src/modules/map/floatTiles")
 
 local grid = love.graphics.newImage("pokemaker/assets/editor/grid.png")
 local pencil = love.graphics.newImage("pokemaker/assets/editor/pencil.png")
@@ -251,11 +251,7 @@ end
 function MapM:draw()
   self:drawMap()
 
-  if self.mode == "tiles" then
-    self:drawMenuBackground()
-    self:drawMenuBar()
-    self:drawToolBar()
-  elseif self.mode == "collision" then
+  if self.mode == "collision" then
     self.collision:draw()
   elseif self.mode == "floatTiles" then
     self.floatTiles:draw()
@@ -303,23 +299,6 @@ function MapM:drawMap()
     end
   end
    love.graphics.setColor(1,1,1)
-end
-
-function MapM:drawMenuBackground()
-  love.graphics.setColor(0.9,0.9,0.9)
-  love.graphics.rectangle("fill", 0, 0, 40, love.graphics.getHeight())
-  love.graphics.setColor(0.8,0.8,0.8)
-  love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 40)
-  love.graphics.setColor(1,1,1)
-end
-
-function MapM:drawToolBar()
-  if self.brush == brushes["pencil"] then love.graphics.draw(pencil, 5, 100) end
-  if self.brush == brushes["brush"] then love.graphics.draw(brush, 5, 100) end
-  if self.brush == brushes["brushXL"] then love.graphics.draw(brushXL, 5, 100) end
-end
-
-function MapM:drawMenuBar()
 end
 
 function MapM:drawHelpMenu()

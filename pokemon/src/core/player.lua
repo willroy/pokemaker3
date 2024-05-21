@@ -46,8 +46,11 @@ function Player:updateAnimation()
 		elseif self.walkTimer < self.animationSpeed then
 			self.img = character[self.dir]
 		elseif self.walkTimer == self.animationSpeed then
+			self.img = character[self.dir]
 			self.walkTimer = 0
 		end
+	else
+		self.img = character[self.dir]
 	end
 end
 

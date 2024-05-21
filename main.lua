@@ -1,5 +1,5 @@
 local pokemakerGameREQ = require("pokemaker/src/editor")
-local pokemakerMenuREQ = require("pokemaker/src/gameMenu")
+local pokemakerMenuREQ = require("pokemaker/src/projectMenu")
 local pokemakerMenuREQ = require("pokemaker/src/menu")
 local pokemonGameREQ = require("pokemon/src/game")
 local pokemonMenuREQ = require("pokemon/src/menu")
@@ -63,7 +63,7 @@ function setCurrent(text)
 end
 
 function openProject(project)
-	current = GameMenuM:new()
+	current = ProjectMenuM:new()
 	current:init(project)
 end
 
