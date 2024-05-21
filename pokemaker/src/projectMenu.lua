@@ -30,7 +30,9 @@ function ProjectMenuM:draw()
 end
 
 function ProjectMenuM:mousepressed(x, y, button, istouch)
-  openMap(self.project, self.maps[math.floor((y-300)/25)+1])
+  if (#self.maps >= math.floor((y-300)/25)+1 and math.floor((y-300)/25)+1 > 0) then
+    openMap(self.project, self.maps[math.floor((y-300)/25)+1])
+  end
 end
 
 function ProjectMenuM:mousereleased(x, y, button, istouch)
@@ -44,13 +46,15 @@ end
 
 function ProjectMenuM:wheelmoved(x, y)
 end
- 
+
 function dirLookup(dir)
   local i, t, popen = 0, {}, io.popen
   local pfile = popen('ls -a "'..dir..'"')
   for filename in pfile:lines() do
-    i = i + 1
-    t[i] = filename
+    if filename ~= "." and filename ~= ".." then
+      i = i + 1
+      t[i] = filename
+    end
   end
   pfile:close()
   return t

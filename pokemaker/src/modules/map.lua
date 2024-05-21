@@ -269,7 +269,7 @@ function MapM:drawMap()
       local quad = tile["quad"]
       local x = tile["x"]
       local y = tile["y"]
-      love.graphics.draw(tileSheets[tilesheet], quad, x, y)
+      love.graphics.draw(tileSheets[tilesheet], quad, x+self.moveX, y+self.moveY)
     end
   end
 
