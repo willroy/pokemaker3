@@ -147,7 +147,7 @@ function Core:wheelmoved(x, y)
 end
 
 function Core:loadCollision()
-  local file = "/home/will-roy/dev/pokemon3/pokemon/db/cols.snorlax"
+  local file = love.filesystem.getWorkingDirectory().."/pokemon/db/cols.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return end

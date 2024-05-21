@@ -317,13 +317,13 @@ end
 -- SAVE LOAD --
 
 function MapM:save(project, mapFile)
-  if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
-    lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
+  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/") then
+    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/")
   end
 
   for k1, layer in pairs(self.layers) do
     if #layer > 0 then
-      local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..k1..".snorlax", "w")
+      local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..k1..".snorlax", "w")
       for k2, tile in pairs(layer) do
         local id = tile["id"]
         local tilesheet = tile["tilesheet"]
@@ -344,8 +344,7 @@ function MapM:load(project, mapFile)
   local newLayers = {}
 
   for i = 1, 10 do
-    local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..i..".snorlax"
-    print(file)
+    local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/maps/"..mapFile.."/tiles-l"..i..".snorlax"
     local f = io.open(file, "r")
     if f then f:close() end
     if f ~= nil then

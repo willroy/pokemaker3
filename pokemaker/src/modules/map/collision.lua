@@ -134,11 +134,11 @@ function CollisionM:wheelmoved(x, y)
 end
 
 function CollisionM:save(project)
-  if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
-    lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
+  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/") then
+    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/")
   end
 
-  local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/cols.snorlax", "w")
+  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/cols.snorlax", "w")
 
   for k, tile in pairs(self.cols) do
     local x = tile["x"]
@@ -151,7 +151,7 @@ end
 
 function CollisionM:load(project)
   self.project = project
-  local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/cols.snorlax"
+  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/cols.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return false end

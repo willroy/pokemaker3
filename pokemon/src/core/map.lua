@@ -87,7 +87,7 @@ function Map:loadTiles()
   local newLayers = {}
 
   for i = 1, 10 do
-    local file = "/home/will-roy/dev/pokemon3/pokemon/db/tiles-l"..i..".snorlax"
+    local file = love.filesystem.getWorkingDirectory().."/pokemon/db/tiles-l"..i..".snorlax"
     local f = io.open(file, "r")
     if f then f:close() end
     if f ~= nil then
@@ -132,7 +132,7 @@ function Map:loadTiles()
 end
 
 function Map:loadFloatTiles()
-  local file = "/home/will-roy/dev/pokemon3/pokemon/db/float.snorlax"
+  local file = love.filesystem.getWorkingDirectory().."/pokemon/db/float.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return end

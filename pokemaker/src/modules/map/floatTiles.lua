@@ -149,11 +149,11 @@ function FloatTilesM:wheelmoved(x, y)
 end
 
 function FloatTilesM:save(project)
-  if not self:FolderExists("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/") then
-    lfs.mkdir("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/")
+  if not self:FolderExists(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/") then
+    lfs.mkdir(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/")
   end
 
-  local file = io.open("/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/floatTiles.snorlax", "w")
+  local file = io.open(love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/floatTiles.snorlax", "w")
 
   for k, tile in pairs(self.floatTiles) do
     local layer = tile["layer"]
@@ -167,7 +167,7 @@ end
 
 function FloatTilesM:load(project)
   self.project = project
-  local file = "/home/will-roy/dev/pokemon3/pokemaker/projects/"..project.."/floatTiles.snorlax"
+  local file = love.filesystem.getWorkingDirectory().."/pokemaker/projects/"..project.."/floatTiles.snorlax"
   local f = io.open(file, "r")
   if f then f:close() end
   if f == nil then return false end
