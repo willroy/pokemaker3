@@ -10,8 +10,6 @@ local brushXL = love.graphics.newImage("pokemaker/assets/editor/penXL.png")
 local onionON = love.graphics.newImage("pokemaker/assets/editor/onionON.png")
 local onionOFF = love.graphics.newImage("pokemaker/assets/editor/onionOFF.png")
 
-local background = love.graphics.newImage("pokemaker/assets/editor/background.png")
-
 local brushes = {
   ["pencil"]={{0,0}},
   ["brush"]={{-1,-1},{0,0},{0,1},{1,0},{1,-1},{0,-1},{-1,0},{-1,1},{1,1}},

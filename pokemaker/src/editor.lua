@@ -21,6 +21,9 @@ local tileSheets = {
   ["text"] = love.graphics.newImage("pokemaker/assets/tilesheets/text.png")
 }
 
+local backgroundBack = love.graphics.newImage("pokemaker/assets/editor/background-back.png")
+local backgroundFront = love.graphics.newImage("pokemaker/assets/editor/background-front.png")
+
 EditorM = {}
 
 function EditorM:new(o)
@@ -45,7 +48,7 @@ function EditorM:init(project, mapFile, new)
   self.palette = PaletteM:new()
   self.map = MapM:new()
 
-  self.palette:init(1, 40, 38, 256, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
+  self.palette:init(1, 1042, 38, 256, mainY-40, tileSheets["outside_buildings"], "outside_buildings")
 
   self.map:init(1, 38, 38, mainX-40, mainY-32)
   self.map:load(self.project, self.mapFile)
@@ -70,7 +73,9 @@ end
 
 function EditorM:draw()
   self.map:draw(dt)
+  love.graphics.draw(backgroundBack, 0, 0)
   self.palette:draw(dt)
+  love.graphics.draw(backgroundFront, 0, 0)
 end
 
 function EditorM:mousepressed(x, y, button, istouch)
