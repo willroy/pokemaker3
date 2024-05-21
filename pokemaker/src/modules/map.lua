@@ -149,14 +149,16 @@ end
 -- UPDATE METHODS --
 
 function MapM:move()
-  if love.keyboard.isDown("w") then self.moveY = self.moveY + 16
-  elseif love.keyboard.isDown("a") then self.moveX = self.moveX + 16
-  elseif love.keyboard.isDown("s") then self.moveY = self.moveY - 16
-  elseif love.keyboard.isDown("d") then self.moveX = self.moveX - 16 end
+  if love.keyboard.isDown("w") then self.moveY = self.moveY + 32
+  elseif love.keyboard.isDown("a") then self.moveX = self.moveX + 32
+  elseif love.keyboard.isDown("s") then self.moveY = self.moveY - 32
+  elseif love.keyboard.isDown("d") then self.moveX = self.moveX - 32 end
 end
 
 function MapM:removeTile()
   local x, y = love.mouse.getPosition()
+  x = x - self.moveX
+  y = y - self.moveY
   local pressed = love.mouse.isDown(2)
 
   if not pressed then return false end
@@ -193,6 +195,8 @@ end
 function MapM:placeTile()
   local palette = current:getPalette()
   local x, y = love.mouse.getPosition()
+  x = x - self.moveX
+  y = y - self.moveY
   local pressed = love.mouse.isDown(1)
 
   if not self.start then return end
@@ -260,7 +264,8 @@ end
 
 function MapM:drawMap()
   love.graphics.setColor(1,1,1)
-  love.graphics.draw(grid, self.gridQuad, self.x, self.y)
+  -- Grid is slightly offset for some reason, so put 2 and 12 to correct, probably due to pos of MapM
+  love.graphics.draw(grid, self.gridQuad, self.x-2, self.y+12)
   for k1, layer in pairs(self.layers) do
     if self.layer == k1 or not self.onionSkin then love.graphics.setColor(1,1,1)
     else love.graphics.setColor(1,1,1,0.6) end
