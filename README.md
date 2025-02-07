@@ -21,4 +21,3 @@ Newest version of this pokemon game builder
 #### Requires:
 - lua
 - love2D (https://love2d.org/wiki/Getting_Started)
-- luafilesystem (can be installed via `luarocks install luafilesystem`)
