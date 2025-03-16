@@ -1,4 +1,4 @@
-## Pokemon3
+## Pokemaker3
 
 Newest version of this pokemon game builder
 
